@@ -1,16 +1,128 @@
-# React + Vite
+# Social Media Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é um projeto de rede social desenvolvido com **React** e **Vite**,
+utilizando bibliotecas modernas para estilização e componentes. O
+objetivo é criar uma aplicação funcional e escalável, com um design
+modular e boas práticas de desenvolvimento.
 
-Currently, two official plugins are available:
+------------------------------------------------------------------------
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📂 Estrutura do Projeto
 
-## React Compiler
+A estrutura do projeto está organizada da seguinte forma:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+client/
+├── public/ # Arquivos públicos
+│ ├── vite.svg
+│ └── react.svg
+├── src/ # Código-fonte principal
+│ ├── assets/ # Recursos estáticos (imagens, ícones)
+│ ├── components/ # Componentes reutilizáveis
+│ │ ├── UI/ # Componentes de interface
+│ │ ├── Layout/ # Componentes de layout
+│ │ └── Common/ # Componentes comuns
+│ ├── pages/ # Páginas principais
+│ │ ├── Home/
+│ │ ├── Profile/
+│ │ └── Feed/
+│ ├── styles/ # Estilos globais e temas
+│ ├── utils/ # Utilitários e helpers
+│ ├── App.jsx # Componente raiz
+│ ├── main.jsx # Ponto de entrada da aplicação
+│ └── index.css # Estilos globais
+├── package.json # Dependências e scripts
+├── vite.config.js # Configuração do Vite
+├── eslint.config.js # Configuração do ESLint
+└── README.md # Documentação
 
-## Expanding the ESLint configuration
+------------------------------------------------------------------------
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tecnologias Utilizadas
+
+### **Frontend**
+
+-   **React**
+-   **Vite**
+-   **@mui/material**
+-   **@mui/icons-material**
+-   **CSS Modules**
+
+### **Ferramentas de Desenvolvimento**
+
+-   **ESLint**
+-   **@eslint/js**
+-   **eslint-plugin-react-hooks**
+-   **eslint-plugin-react-refresh**
+-   **@vitejs/plugin-react**
+
+------------------------------------------------------------------------
+
+## 📜 Scripts Disponíveis
+
+-   `npm run dev`
+-   `npm run build`
+-   `npm run preview`
+-   `npm run lint`
+
+------------------------------------------------------------------------
+
+## 🚀 Melhorias Futuras
+
+### **Backend**
+
+-   Node.js para autenticação, banco de dados e APIs REST.
+
+### **Frontend**
+
+-   Bootstrap
+-   Refatoração
+-   Melhor responsividade
+
+------------------------------------------------------------------------
+
+## 📦 Como Instalar e Executar o Projeto
+
+1.  Clone o repositório:
+
+        git clone https://github.com/seu-usuario/seu-repositorio.git
+
+2.  Acesse o diretório:
+
+        cd client
+
+3.  Instale dependências:
+
+        npm install
+
+4.  Inicie:
+
+        npm run dev
+
+Acesse: **http://localhost:5173**
+
+------------------------------------------------------------------------
+
+## 📝 Notas
+
+-   Requer Node.js e npm instalados.
+
+-   Para adicionar Bootstrap:
+
+        npm install bootstrap
+
+    E importar:
+
+        import 'bootstrap/dist/css/bootstrap.min.css';
+
+------------------------------------------------------------------------
+
+## 📚 Referências
+
+-   React: https://react.dev/
+-   Vite: https://vitejs.dev/
+-   Material-UI: https://mui.com/
+-   Bootstrap: https://getbootstrap.com/
+
+## 🧑‍💻 Autor
+
+Weidson Cordeiro - Desenvolvedor Frontend
