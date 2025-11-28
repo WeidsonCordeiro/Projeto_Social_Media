@@ -2,7 +2,7 @@
 import styles from './Share.module.css';
 
 //Images
-import Person1 from '../../assets/person/1.jpg';
+import Person1 from '../../assets/person/1.webp';
 
 //Icons
 import { PermMedia, Label, Room, EmojiEmotions } from '@mui/icons-material';

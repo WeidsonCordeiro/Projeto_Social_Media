@@ -5,7 +5,7 @@ import styles from "./Topbar.module.css";
 import { Person, Chat, Notifications, Search } from "@mui/icons-material";
 
 //Images
-import ProfilePic from "../../assets/person/1.jpg";
+import ProfilePic from "../../assets/person/1.webp";
 
 const Topbar = () => {
   return (

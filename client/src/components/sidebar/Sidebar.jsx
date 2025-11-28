@@ -5,7 +5,7 @@ import styles from "./Sidebar.module.css";
 import { Bookmark, Chat, Group, HelpOutline, PlayCircleFilledOutlined, RssFeed, School, WorkOutline, Event } from "@mui/icons-material";
 
 //Images
-import PersonFriend from '../../assets/person/2.jpg';
+import PersonFriend from '../../assets/person/2.webp';
 
 const Sidebar = () => {
   return (

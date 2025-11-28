@@ -5,6 +5,8 @@ import Share from '../share/Share';
 //Css
 import styles from './Feed.module.css';
 
+//Data dummy
+import { Posts } from '../../dummyData';
 
 
 const feed = () => {
@@ -12,19 +14,10 @@ const feed = () => {
     <div className={styles.feedContainer}>
       <div className={styles.feedWrapper}>
         <Share />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
-        <Post />
+        {Posts.map((p) => (
+          <Post key={p.id} post={p} />
+        ))}
+
       </div>
     </div>
   )

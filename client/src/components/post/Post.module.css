@@ -67,6 +67,11 @@
     cursor: pointer;
 }
 
+.likeIconSmall {
+    width: 20px !important;
+    height: 20px !important;
+}
+
 .postLikeCounter {
     font-size: 15px;
 }
