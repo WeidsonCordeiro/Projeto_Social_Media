@@ -2,3 +2,7 @@
 https://www.youtube.com/watch?v=zM93yZ_8SvE&list=PLj-4DlPRT48nfYgDK00oTjlDF4O0ZZyG8
 
 https://html-css-js.com/css/generator/box-shadow/
+
+**Dica:** Ao seguir tutoriais, sempre valide a data e veja a documentação oficial:
+- [Vite Docs](https://vitejs.dev/) — para setup e assets
+- [React Docs](https://react.dev/) — oficial e sempre atualizada

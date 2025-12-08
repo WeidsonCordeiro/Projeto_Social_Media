@@ -11,12 +11,12 @@ import styles from './Home.module.css'
 const Home = () => {
   return (
     <>
-    < Topbar />
-    <div className={styles.homeContainer}>
-      < Sidebar />
-      < Feed /> 
-      <Rightbar />
-    </div>
+      < Topbar />
+      <div className={styles.homeContainer}>
+        < Sidebar />
+        < Feed /> 
+        <Rightbar />
+      </div>
     </>
   )
 }

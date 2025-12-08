@@ -1,0 +1,12 @@
+# Porta do servidor
+PORT="8800"
+
+# MongoDB user and password
+DB_HOST=cluster0.iexdbkf.mongodb.net/
+DB_USER=social_media_root
+DB_PASSWORD=@SocialRoot_
+
+# JWT secret key
+#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+#thisisoursecretkey
+JWT_SECRET=social_media-secret-key
