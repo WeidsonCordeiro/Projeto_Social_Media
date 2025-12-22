@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router(); // Use express.Router() for modular routing
 
 // Define routes
-// router.use("/api/auth", require("./authRoutes"));
-// router.use("/api/users", require("./userRoutes"));
+router.use("/api/auth", require("./authRoutes"));
+router.use("/api/users", require("./userRoutes"));
 router.use("/api/posts", require("./postRoutes"));
 
 // Test route under /api

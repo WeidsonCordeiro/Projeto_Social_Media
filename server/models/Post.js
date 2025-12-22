@@ -19,7 +19,10 @@ const PostSchema = new mongoose.Schema(
       default: [],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
+  {
+    collection: "posts",
+  }
 );
 
 const Post = mongoose.model("Post", PostSchema);

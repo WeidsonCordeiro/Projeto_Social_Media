@@ -1,50 +1,50 @@
 export const Users = [
   {
-    id: 1,  
+    id: "69412f45aea423d76aafbe71",
     profilePicture: "/src/assets/person/1.webp",
     username: "Safak Kocaoglu",
-  },    
-    {
-    id: 2,  
+  },
+  {
+    id: 2,
     profilePicture: "/src/assets/person/2.webp",
-    username: "Janell Shrum",   
-    },
-    {
-    id: 3,  
+    username: "Janell Shrum",
+  },
+  {
+    id: 3,
     profilePicture: "/src/assets/person/3.webp",
-    username: "Alex Durden",   
-    },
-    {
-    id: 4,  
+    username: "Alex Durden",
+  },
+  {
+    id: 4,
     profilePicture: "/src/assets/person/4.webp",
     username: "Dora Hawks",
-    },    
-    {
-    id: 5,  
+  },
+  {
+    id: 5,
     profilePicture: "/src/assets/person/5.webp",
     username: "Thomas Holden",
-    },    
-    {
-    id: 6,  
+  },
+  {
+    id: 6,
     profilePicture: "/src/assets/person/6.webp",
     username: "Shirley Beauchamp",
-    },
-    {
-    id: 7,  
+  },
+  {
+    id: 7,
     profilePicture: "/src/assets/person/7.webp",
     username: "Travis Bennett",
-    },    
-    {
-    id: 8,  
+  },
+  {
+    id: 8,
     profilePicture: "/src/assets/person/8.webp",
     username: "Kristen Thomas",
-    },    
-    {
+  },
+  {
     id: 9,
     profilePicture: "/src/assets/person/9.webp",
     username: "Gary Duty",
-    },
-    {
+  },
+  {
     id: 10,
     profilePicture: "/src/assets/person/10.webp",
     username: "Safak Kocaoglu",
@@ -59,16 +59,16 @@ export const Posts = [
     userId: 1,
     like: 32,
     comment: 9,
-    },
-    {
+  },
+  {
     id: 2,
     photo: "/src/assets/posts/2.webp",
     date: "15 mins ago",
     userId: 2,
     like: 2,
     comment: 1,
-    },
-    {
+  },
+  {
     id: 3,
     desc: "Every moment is a fresh beginning.",
     photo: "/src/assets/posts/3.webp",
@@ -76,32 +76,32 @@ export const Posts = [
     userId: 3,
     like: 61,
     comment: 2,
-    },  
-    {
+  },
+  {
     id: 4,
     photo: "/src/assets/posts/4.webp",
     date: "4 hours ago",
     userId: 4,
-    like: 7,    
+    like: 7,
     comment: 3,
-    },  
-    {
+  },
+  {
     id: 5,
     photo: "/src/assets/posts/5.webp",
     date: "5 hours ago",
     userId: 5,
     like: 23,
     comment: 5,
-    },  
-    {
+  },
+  {
     id: 6,
     photo: "/src/assets/posts/6.webp",
     date: "1 day ago",
     userId: 6,
     like: 44,
     comment: 6,
-    },  
-    {
+  },
+  {
     id: 7,
     desc: "Never regret anything that made you smile.",
     photo: "/src/assets/posts/7.webp",
@@ -109,16 +109,16 @@ export const Posts = [
     userId: 7,
     like: 52,
     comment: 3,
-    },  
-    {
+  },
+  {
     id: 8,
     photo: "/src/assets/posts/8.webp",
     date: "3 days ago",
     userId: 8,
     like: 15,
     comment: 1,
-    },  
-    {   
+  },
+  {
     id: 9,
     desc: "Change the world by being yourself.",
     photo: "/src/assets/posts/9.webp",
@@ -126,8 +126,8 @@ export const Posts = [
     userId: 9,
     like: 11,
     comment: 2,
-    },  
-    {   
+  },
+  {
     id: 10,
     photo: "/src/assets/posts/10.webp",
     date: "1 week ago",

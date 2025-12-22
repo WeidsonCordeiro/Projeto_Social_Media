@@ -16,11 +16,11 @@ if (!dbUser || !dbPassword || !dbHost) {
 // URL-encode password para evitar caracteres especiais causarem erro
 const encodedPassword = encodeURIComponent(dbPassword);
 
-const URI = `mongodb+srv://${dbUser}:${encodedPassword}@${dbHost}/Social_Media?retryWrites=true&w=majority`;
+const URI = `mongodb+srv://${dbUser}:${encodedPassword}@${dbHost}/?retryWrites=true&w=majority`;
 
 const conn = async () => {
   try {
-    const dbConn = await mongoose.connect(URI);
+    const dbConn = await mongoose.connect(URI, { dbName: "Social" });
     console.log("Conectado ao MongoDB!");
     return dbConn;
   } catch (error) {

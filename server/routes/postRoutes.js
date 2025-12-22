@@ -8,17 +8,17 @@ const {
   deletePost,
   likePost,
   getPosts,
-  getAlltPosts,
+  getAllPosts,
 } = require("../controllers/postControllers");
 
 //Middleware
 
 //Routes
-router.post("/newPost", setPost);
-router.put("/updatePost/:id", updatePost);
-router.delete("/deletePost/:id", deletePost);
-router.put("/:id/like", likePost);
+router.post("/register", setPost);
+router.put("/:id", updatePost);
+router.delete("/:id", deletePost);
+router.put("/:id/likes", likePost);
 router.get("/:id", getPosts);
-router.get("/timeline/:userId", getAlltPosts);
+router.get("/timeline/:userId", getAllPosts);
 
 module.exports = router;

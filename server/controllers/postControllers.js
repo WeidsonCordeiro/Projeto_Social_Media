@@ -6,9 +6,10 @@ const mongoose = require("mongoose");
 const setPost = async (req, res) => {
   try {
     // Validate request body
-    const { userId, description, image } = req.body;
+    const { userId, desc, img, likes } = req.body;
+    console.log(req.body);
 
-    if (!userId || !description) {
+    if (!userId || !desc) {
       return res
         .status(400)
         .json({ errors: ["Campos obrigatórios não foram preenchidos!"] });
@@ -17,8 +18,9 @@ const setPost = async (req, res) => {
     // Create new post
     const newPost = new Post({
       userId,
-      description,
-      image: image || null, // Optional field
+      desc,
+      img: img || null, // Optional field
+      likes,
     });
 
     const savedPost = await newPost.save();
@@ -35,7 +37,7 @@ const setPost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     // Validate request body
-    const { userId, description, image } = req.body;
+    const { userId, desc, img } = req.body;
     const { id } = req.params;
 
     // Check if post ID is valid
@@ -58,7 +60,7 @@ const updatePost = async (req, res) => {
     }
 
     // Ensure there is something to update
-    if (!description && !image) {
+    if (!desc && !img) {
       return res
         .status(400)
         .json({ errors: ["Nenhuma informação foi enviada para atualizar!"] });
@@ -67,7 +69,7 @@ const updatePost = async (req, res) => {
     // Update the post
     const updatedPost = await Post.findByIdAndUpdate(
       id,
-      { $set: { description, image } },
+      { $set: { desc, img } },
       { new: true } // Return the updated document
     );
 
@@ -194,7 +196,7 @@ const getPosts = async (req, res) => {
 };
 
 //Get Timeline Posts
-const getAlltPosts = async (req, res) => {
+const getAllPosts = async (req, res) => {
   try {
     const currentUserId = await User.findById(req.params.userId);
 
@@ -226,5 +228,5 @@ module.exports = {
   deletePost,
   likePost,
   getPosts,
-  getAlltPosts,
+  getAllPosts,
 };
