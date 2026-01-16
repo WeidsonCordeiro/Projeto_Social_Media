@@ -36,31 +36,27 @@ Aplicação fullstack de rede social desenvolvida com React, Context API, Node.j
 ## 📁 Variáveis de Ambiente
 
 ### Backend (.env)
-
-PORT=8800
-MONGO_URI=mongodb://localhost:27017/social_media
-JWT_SECRET=your_secret
-BASE_URL=http://localhost:8800
+- PORT=8800
+- MONGO_URI=mongodb://localhost:27017/social_media
+- JWT_SECRET=your_secret
+- BASE_URL=http://localhost:8800
 
 ### Frontend (.env)
-
-VITE_API_URL=http://localhost:8800
-VITE_UPLOADS_URL=http://localhost:8800/uploads
+- VITE_API_URL=http://localhost:8800
+- VITE_UPLOADS_URL=http://localhost:8800/uploads
 
 ▶️ Como rodar o projeto
-
 ### Backend
-cd client
-npm install
-npm run dev
+- cd client
+- npm install
+- npm run dev
 
 ### Frontend
-cd client
-npm install
-npm run dev
+- cd client
+- npm install
+- npm run dev
 
 📌 Status
-
-Projeto em desenvolvimento contínuo.
+- Projeto em desenvolvimento contínuo.
 
 
