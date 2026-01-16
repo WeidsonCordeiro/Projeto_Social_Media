@@ -16,8 +16,8 @@ const imageStorage = multer.diskStorage({
 
     if (req.baseUrl.includes("users")) {
       folder = "users";
-    } else if (req.baseUrl.includes("photos")) {
-      folder = "photos";
+    } else if (req.baseUrl.includes("posts")) {
+      folder = "posts";
     }
 
     const uploadPath = `uploads/${folder}/`;
@@ -36,7 +36,7 @@ const imageUpload = multer({
   storage: imageStorage,
   fileFilter: (req, file, cb) => {
     try {
-      const filetypes = /jpeg|jpg|png|gif/;
+      const filetypes = /jpeg|jpg|png|gif|webp/;
       const mimetype = filetypes.test(file.mimetype);
       const extname = filetypes.test(
         path.extname(file.originalname).toLowerCase()

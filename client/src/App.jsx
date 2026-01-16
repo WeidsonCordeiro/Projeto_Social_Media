@@ -1,31 +1,53 @@
+//Hooks
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+
 //Components
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
+
+//Components
 // import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
 
 //Css
-import './App.css'
+import "./App.css";
 
 //Pages
-import Home from './pages/Home/Home'
-import Register from './pages/Register/Register'
-import Login from './pages/Login/Login'
-import Profile from './pages/Profile/Profile'
+import Home from "./pages/Home/Home";
+import Register from "./pages/Register/Register";
+import Login from "./pages/login/Login";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
+  const { user } = useContext(AuthContext);
 
   return (
     <>
       {/* <LoadingSpinner /> */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/" element={user ? <Home /> : <Register />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/" /> : <Login />}
+          />
+          <Route
+            path="/register"
+            element={user ? <Navigate to="/" /> : <Register />}
+          />
+          <Route
+            path="/profile/:username"
+            element={user ? <Profile /> : <Navigate to="/" />}
+          />
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

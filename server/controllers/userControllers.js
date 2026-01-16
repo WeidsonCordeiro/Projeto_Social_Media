@@ -14,7 +14,7 @@ const generateToken = (id) => {
 //Register User
 const setUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
 
     //Check if user exists
     const userExists = await User.findOne({ email });
@@ -31,6 +31,7 @@ const setUser = async (req, res) => {
 
     // Create new user
     const newUser = await User.create({
+      username,
       email,
       password: passwordHash,
     });
@@ -43,6 +44,7 @@ const setUser = async (req, res) => {
 
     res.status(201).json({
       _id: newUser._id,
+      username: newUser.username,
       token: generateToken(newUser._id),
     });
   } catch (error) {
@@ -124,7 +126,12 @@ const login = async (req, res) => {
 
     res.status(201).json({
       _id: user._id,
+      username: user.username,
       token: generateToken(user._id),
+      followers: user.followers,
+      followings: user.followings,
+      profilePicture: user.profilePicture,
+      coverPicture: user.coverPicture,
     });
   } catch (error) {
     console.error("Erro ao fazer login:", error);
@@ -152,10 +159,125 @@ const getUserById = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Erro ao buscar usuário:", error);
+    console.error("Erro ao buscar usuário por Id:", error);
+    return res.status(500).json({
+      errors: ["Erro ao buscar usuário por Id!"],
+      message: error.message,
+    });
+  }
+};
+
+//Get User by Name
+const getUserByName = async (req, res) => {
+  try {
+    const { userName } = req.params;
+
+    //Check if user exists
+    const user = await User.findOne({ username: userName }).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Erro ao buscar usuário por Nome:", error);
+    return res.status(500).json({
+      errors: ["Erro ao buscar usuário por Nome!"],
+      message: error.message,
+    });
+  }
+};
+
+//Get Friends by UserId
+const getFriendsById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    //Check if user exists
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(422).json({ errors: ["Id Usuário inválido!"] });
+    }
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+    }
+    const friends = await Promise.all(
+      user.followings.map((friendId) => {
+        return User.findById(friendId).select("_id username profilePicture");
+      })
+    );
+    res.status(200).json(friends);
+  } catch (error) {
+    console.error("Erro ao buscar amigos por Id:", error);
+    return res.status(500).json({
+      errors: ["Erro ao buscar amigos por Id!"],
+      message: error.message,
+    });
+  }
+};
+
+//User Follows
+const userFollows = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const reqUser = req.user;
+    if (reqUser._id.toString() === userId) {
+      return res
+        .status(400)
+        .json({ errors: ["Você não pode seguir você mesmo!"] });
+    }
+    const userToFollow = await User.findById(userId);
+    const currentUser = await User.findById(reqUser._id);
+    if (!userToFollow) {
+      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+    }
+    if (currentUser.followings.includes(userId)) {
+      return res.status(400).json({ errors: ["Você já segue este usuário!"] });
+    }
+    currentUser.followings.push(userId);
+    await currentUser.save();
+    res.status(200).json({ message: "Usuário seguido com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao seguir usuário:", error);
     return res
       .status(500)
-      .json({ errors: ["Erro ao buscar usuário!"], errors: error.message });
+      .json({ errors: ["Erro ao seguir usuário!"], message: error.message });
+  }
+};
+
+//User unFollows
+const userUnFollows = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const reqUser = req.user;
+    console.log("User ID to unfollow:", userId);
+    console.log("User ID to unfollow:", reqUser);
+
+    if (reqUser._id.toString() === userId) {
+      return res
+        .status(400)
+        .json({ errors: ["Você não pode deixar de seguir você mesmo!"] });
+    }
+    const userToUnFollow = await User.findById(userId);
+    const currentUser = await User.findById(reqUser._id);
+    if (!userToUnFollow) {
+      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+    }
+    if (!currentUser.followings.includes(userId)) {
+      return res.status(400).json({ errors: ["Você não segue este usuário!"] });
+    }
+    currentUser.followings = currentUser.followings.filter(
+      (id) => id.toString() !== userId
+    );
+    await currentUser.save();
+    res.status(200).json({ message: "Usuário deixado de seguir com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao deixar de seguir usuário:", error);
+    return res.status(500).json({
+      errors: ["Erro ao deixar de seguir usuário!"],
+      message: error.message,
+    });
   }
 };
 
@@ -165,4 +287,8 @@ module.exports = {
   updateUser,
   login,
   getUserById,
+  getUserByName,
+  getFriendsById,
+  userFollows,
+  userUnFollows,
 };

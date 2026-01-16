@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 //Solve Cors
 //app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
-// //Upload files
+//Upload files
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 //DB Connection

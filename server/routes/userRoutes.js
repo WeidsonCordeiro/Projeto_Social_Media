@@ -8,6 +8,10 @@ const {
   updateUser,
   login,
   getUserById,
+  getUserByName,
+  getFriendsById,
+  userFollows,
+  userUnFollows,
 } = require("../controllers/userControllers");
 
 //Middleware
@@ -18,13 +22,26 @@ const {
   userUpdateValidation,
 } = require("../middlewares/userValidation");
 const authGuard = require("../middlewares/authGuard");
+const { imageUpload } = require("../middlewares/imageUpload");
 
 //Routes
 router.post("/register", userCreateValidation(), validate, setUser);
 router.post("/login", loginValidation(), validate, login);
 router.get("/profile", authGuard, getCurrentUser);
-router.put("/", authGuard, userUpdateValidation(), validate, updateUser);
+router.put(
+  "/",
+  authGuard,
+  userUpdateValidation(),
+  validate,
+  imageUpload.single("profilePicture"),
+  imageUpload.single("coverPicture"),
+  updateUser
+);
 router.get("/:id", authGuard, getUserById);
+router.get("/username/:userName", authGuard, getUserByName);
+router.get("/friends/:userId", getFriendsById);
+router.put("/follows/:userId", authGuard, userFollows);
+router.put("/unfollows/:userId", authGuard, userUnFollows);
 
 module.exports = router;
 

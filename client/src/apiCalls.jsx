@@ -1,20 +1,30 @@
+//Hooks
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+} from "./context/AuthActions";
+
+//Utils
+import { requestConfig } from "./utils/config";
+
 export const loginCall = async (userCredentials, dispatch) => {
-  dispatch({ type: "LOGIN_START" });
+  dispatch(loginStart());
+  const config = requestConfig("POST", userCredentials, null);
   try {
-    const res = await fetch("/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userCredentials),
-    });
+    const res = await fetch(`/api/users/login`, config);
     const data = await res.json();
-    if (res.ok) {
-      dispatch({ type: "LOGIN_SUCCESS", payload: data });
-    } else {
-      dispatch({ type: "LOGIN_FAILURE", payload: data });
+
+    if (data.errors || !res.ok) {
+      throw new Error(data.errors || "Erro ao fazer login");
     }
-  } catch (err) {
-    dispatch({ type: "LOGIN_FAILURE", payload: err });
+    dispatch(loginSuccess(data));
+  } catch (error) {
+    dispatch(loginFailure(error.message));
   }
+};
+
+export const logoutCall = (dispatch) => {
+  dispatch(logout());
 };

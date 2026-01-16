@@ -1,4 +1,6 @@
-//Components
+//Hooks
+import { useState, useEffect, use } from "react";
+import { Form, Link } from "react-router-dom";
 import { useRef, useContext } from "react";
 import { loginCall } from "../../apiCalls";
 import { AuthContext } from "../../context/AuthContext";
@@ -10,19 +12,27 @@ import { CircularProgress } from "@mui/material";
 import styles from "./Login.module.css";
 
 const Login = () => {
-  const email = useRef();
-  const password = useRef();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { user, isFetching, error, dispatch } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginCall(
-      { email: email.current.value, password: password.current.value },
-      dispatch
-    );
+
+    const userCredentials = {
+      email,
+      password,
+    };
+
+    loginCall(userCredentials, dispatch);
   };
 
-  console.log(user);
+  useEffect(() => {
+    if (user && !error) {
+      setEmail("");
+      setPassword("");
+    }
+  }, [user, error]);
 
   return (
     <div className={styles.loginContainer}>
@@ -34,21 +44,21 @@ const Login = () => {
           </span>
         </div>
         <div className={styles.loginRight}>
-          <div className={styles.loginBox} onSubmit={handleSubmit}>
+          <form className={styles.loginBox} onSubmit={handleSubmit} noValidate>
             <input
               placeholder="Email"
               type="email"
               className={styles.loginInput}
-              required
-              ref={email}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <input
               placeholder="Password"
               type="password"
               className={styles.loginInput}
-              required
               min={6}
-              ref={password}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="submit"
@@ -62,14 +72,12 @@ const Login = () => {
               )}
             </button>
             <span className={styles.loginForgot}>Forgot Password?</span>
-            <button className={styles.loginRegisterButton}>
-              {isFetching ? (
-                <CircularProgress color="white" size={20} />
-              ) : (
-                "Create a New Account"
-              )}
-            </button>
-          </div>
+            <Link to="/register">
+              <button className={styles.loginRegisterButton}>
+                Create a New Account
+              </button>
+            </Link>
+          </form>
         </div>
       </div>
     </div>

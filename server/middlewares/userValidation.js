@@ -2,11 +2,11 @@ const { body } = require("express-validator");
 
 const userCreateValidation = () => {
   return [
-    // body("username")
-    //   .isString()
-    //   .withMessage("O nome é obrigatório!")
-    //   .isLength({ min: 3 })
-    //   .withMessage("O nome deve ter pelo menos 3 caracteres!"),
+    body("username")
+      .isString()
+      .withMessage("O nome é obrigatório!")
+      .isLength({ min: 3 })
+      .withMessage("O nome deve ter pelo menos 3 caracteres!"),
     body("email")
       .isString()
       .notEmpty()
@@ -21,15 +21,16 @@ const userCreateValidation = () => {
       .bail()
       .isLength({ min: 6 })
       .withMessage("A senha deve ter pelo menos 6 caracteres!"),
-    // body("confirmPassword")
-    //   .isString()
-    //   .withMessage("A confirmação de senha é obrigatória!")
-    //   .custom((value, { req }) => {
-    //     if (value !== req.body.password) {
-    //       throw new Error("As senhas não são iguais!");
-    //     }
-    //     return true;
-    //   }),
+    body("confirmPassword")
+      .isString()
+      .withMessage("A confirmação de senha é obrigatória!")
+      .bail()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("As senhas não são iguais!");
+        }
+        return true;
+      }),
   ];
 };
 

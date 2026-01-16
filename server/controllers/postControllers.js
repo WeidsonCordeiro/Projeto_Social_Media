@@ -6,10 +6,9 @@ const mongoose = require("mongoose");
 const setPost = async (req, res) => {
   try {
     // Validate request body
-    const { userId, desc, img, likes } = req.body;
-    console.log(req.body);
-
-    if (!userId || !desc) {
+    const { userId, description } = req.body;
+    const img = req.file ? req.file.filename : null;
+    if (!userId || !description) {
       return res
         .status(400)
         .json({ errors: ["Campos obrigatórios não foram preenchidos!"] });
@@ -18,9 +17,8 @@ const setPost = async (req, res) => {
     // Create new post
     const newPost = new Post({
       userId,
-      desc,
-      img: img || null, // Optional field
-      likes,
+      description,
+      img,
     });
 
     const savedPost = await newPost.save();
@@ -37,7 +35,8 @@ const setPost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     // Validate request body
-    const { userId, desc, img } = req.body;
+    const { userId, description } = req.body;
+    const img = req.file ? req.file.filename : null;
     const { id } = req.params;
 
     // Check if post ID is valid
@@ -60,7 +59,7 @@ const updatePost = async (req, res) => {
     }
 
     // Ensure there is something to update
-    if (!desc && !img) {
+    if (!description && !img) {
       return res
         .status(400)
         .json({ errors: ["Nenhuma informação foi enviada para atualizar!"] });
@@ -69,7 +68,7 @@ const updatePost = async (req, res) => {
     // Update the post
     const updatedPost = await Post.findByIdAndUpdate(
       id,
-      { $set: { desc, img } },
+      { $set: { description, img } },
       { new: true } // Return the updated document
     );
 
@@ -168,6 +167,44 @@ const likePost = async (req, res) => {
   }
 };
 
+//Comment Post
+const commentPost = async (req, res) => {
+  try {
+    // Validate request body
+    const { userId, comment } = req.body;
+    const { id } = req.params;
+
+    // Check if post ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({ errors: ["ID do Post inválido!"] });
+    }
+
+    // Check if post exists
+    const postExists = await Post.findById(id);
+
+    if (!postExists) {
+      return res.status(404).json({ errors: ["Post não encontrado!"] });
+    }
+
+    // Add comment to the post
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { $push: { comments: { userId, comment } } },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Comentário adicionado com sucesso!", updatedPost });
+  } catch (error) {
+    console.error("Erro ao comentar Post:", error);
+    return res.status(500).json({
+      errors: ["Erro ao comentar Post!"],
+      details: error.message,
+    });
+  }
+};
+
 //Get Post
 const getPosts = async (req, res) => {
   try {
@@ -195,8 +232,8 @@ const getPosts = async (req, res) => {
   }
 };
 
-//Get Timeline Posts
-const getAllPosts = async (req, res) => {
+//Get Timeline Posts by UserId
+const getAllPostsByUserId = async (req, res) => {
   try {
     const currentUserId = await User.findById(req.params.userId);
 
@@ -204,19 +241,46 @@ const getAllPosts = async (req, res) => {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
     }
 
-    const userPosts = await Post.find({ userId: currentUserId._id });
+    const userPosts = await Post.find({ userId: currentUserId._id }).sort({
+      createdAt: -1,
+    });
 
     const friendPosts = await Promise.all(
       currentUserId.followings.map((friendId) => {
-        return Post.find({ userId: friendId });
+        return Post.find({ userId: friendId }).sort({
+          createdAt: -1,
+        });
       })
     );
 
     return res.status(200).json(userPosts.concat(...friendPosts));
   } catch (error) {
-    console.error("Erro ao buscar timeline Posts:", error);
+    console.error("Erro ao buscar timeline Posts by UserId:", error);
     return res.status(500).json({
-      errors: ["Erro ao buscar timeline Posts!"],
+      errors: ["Erro ao buscar timeline Posts by UserId!"],
+      details: error.message,
+    });
+  }
+};
+
+//Get Timeline Posts by UserName
+const getAllPostsByUserName = async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ username: req.params.userName });
+
+    if (!currentUser) {
+      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+    }
+
+    const userPosts = await Post.find({ userId: currentUser._id }).sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json(userPosts);
+  } catch (error) {
+    console.error("Erro ao buscar timeline Posts by UserName:", error);
+    return res.status(500).json({
+      errors: ["Erro ao buscar timeline Posts by UserName!"],
       details: error.message,
     });
   }
@@ -227,6 +291,8 @@ module.exports = {
   updatePost,
   deletePost,
   likePost,
+  commentPost,
   getPosts,
-  getAllPosts,
+  getAllPostsByUserId,
+  getAllPostsByUserName,
 };
