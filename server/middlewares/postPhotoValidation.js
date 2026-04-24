@@ -8,7 +8,7 @@ const postPhotoInsertValidation = () => {
       .withMessage("A descrição é obrigatória!")
       .bail()
       .isString()
-      .withMessage("A descrição é obrigatória!")
+      .withMessage("A descrição tem que ser uma string!")
       .bail()
       .isLength({ min: 3 })
       .withMessage("A descrição deve ter pelo menos 3 caracteres!"),
@@ -26,7 +26,7 @@ const postPhotoUpdateValidation = () => {
     body("description")
       .optional()
       .isString()
-      .withMessage("O descrição é obrigatório!")
+      .withMessage("A descrição tem que ser uma string!")
       .bail()
       .isLength({ min: 3 })
       .withMessage("O descrição deve ter pelo menos 3 caracteres!"),
@@ -37,7 +37,7 @@ const postCommentValidation = () => {
   return [
     body("comments")
       .isString()
-      .withMessage("O comentário é obrigatório!")
+      .withMessage("O comentário tem que ser uma string!")
       .bail()
       .isLength({ min: 3 })
       .withMessage("O comentário deve ter pelo menos 3 caracteres!"),

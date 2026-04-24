@@ -3,21 +3,26 @@ const { body } = require("express-validator");
 const userCreateValidation = () => {
   return [
     body("username")
-      .isString()
+      .notEmpty()
       .withMessage("O nome é obrigatório!")
+      .bail()
+      .isString()
+      .withMessage("O nome deve ser uma string!")
+      .bail()
       .isLength({ min: 3 })
       .withMessage("O nome deve ter pelo menos 3 caracteres!"),
     body("email")
-      .isString()
       .notEmpty()
       .withMessage("O e-mail é obrigatório!")
       .bail()
       .isEmail()
       .withMessage("E-mail inválido!"),
     body("password")
-      .isString()
       .notEmpty()
       .withMessage("A senha é obrigatória!")
+      .bail()
+      .isString()
+      .withMessage("A senha deve ser uma string!")
       .bail()
       .isLength({ min: 6 })
       .withMessage("A senha deve ter pelo menos 6 caracteres!"),
@@ -37,18 +42,15 @@ const userCreateValidation = () => {
 const loginValidation = () => {
   return [
     body("email")
-      .isString()
-      .withMessage("O e-mail deve ser uma string!")
-      .bail()
       .notEmpty()
       .withMessage("O e-mail é obrigatório!")
+      .bail()
+      .isString()
+      .withMessage("O e-mail deve ser uma string!")
       .bail()
       .isEmail()
       .withMessage("E-mail inválido!"),
     body("password")
-      .isString()
-      .withMessage("A senha deve ser uma string!")
-      .bail()
       .notEmpty()
       .withMessage("A senha é obrigatória!")
       .bail()
@@ -60,30 +62,37 @@ const loginValidation = () => {
 const userUpdateValidation = () => {
   return [
     body("username")
-      .isString()
       .optional()
+      .isString()
+      .withMessage("O nome deve ser uma string!")
+      .bail()
       .isLength({ min: 3 })
       .withMessage("O nome deve ter pelo menos 3 caracteres!"),
     body("password")
-      .isString()
       .optional()
       .isLength({ min: 6 })
       .withMessage("A senha deve ter pelo menos 6 caracteres!"),
-    body("profilePicture").isString().optional(),
-    body("coverPicture").isString().optional(),
+    body("profilePicture").optional(),
+    body("coverPicture").optional(),
     body("desc")
-      .isString()
       .optional()
+      .isString()
+      .withMessage("A descrição deve ser uma string!")
+      .bail()
       .isLength({ min: 6 })
       .withMessage("A senha deve ter pelo menos 6 caracteres!"),
     body("city")
-      .isString()
       .optional()
+      .isString()
+      .withMessage("A cidade deve ser uma string!")
+      .bail()
       .isLength({ min: 6 })
       .withMessage("A senha deve ter pelo menos 6 caracteres!"),
     body("from")
-      .isString()
       .optional()
+      .isString()
+      .withMessage("O local de origem deve ser uma string!")
+      .bail()
       .isLength({ min: 3 })
       .withMessage("A senha deve ter pelo menos 3 caracteres!"),
   ];

@@ -1,13 +1,14 @@
 const User = require("../models/User");
-const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
+const cloudinary = require("../utils/cloudinary");
 const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWT_SECRET;
 
 //Gerenate User Token
 const generateToken = (id) => {
   return jwt.sign({ id }, jwtSecret, {
-    expiresIn: "4h",
+    expiresIn: "1h",
   });
 };
 
@@ -92,7 +93,7 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
       { $set: allowedUpdates },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select("-password");
 
     if (!updatedUser) {
@@ -205,7 +206,7 @@ const getFriendsById = async (req, res) => {
     const friends = await Promise.all(
       user.followings.map((friendId) => {
         return User.findById(friendId).select("_id username profilePicture");
-      })
+      }),
     );
     res.status(200).json(friends);
   } catch (error) {
@@ -268,7 +269,7 @@ const userUnFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você não segue este usuário!"] });
     }
     currentUser.followings = currentUser.followings.filter(
-      (id) => id.toString() !== userId
+      (id) => id.toString() !== userId,
     );
     await currentUser.save();
     res.status(200).json({ message: "Usuário deixado de seguir com sucesso!" });

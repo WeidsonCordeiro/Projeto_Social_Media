@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const connectDB = require("./config/db");
+
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -12,15 +14,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//Solve Cors
-//app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-
-//Upload files
-app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-
-//DB Connection
-const db = require("./config/db.js");
-
 //Routes
 app.use(router);
 
@@ -30,6 +23,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ errors: [err.message] });
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Server run in http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  connectDB();
+  app.listen(port, () => {
+    console.log(`🚀 Server run in http://localhost:${port}`);
+  });
+}
+
+module.exports = app;
