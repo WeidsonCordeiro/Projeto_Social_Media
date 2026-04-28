@@ -1,62 +1,95 @@
+## 📝 Social Media App — Fullstack (React (Vite) + Node.js + MongoDB)
+
+Social Media App é uma aplicação fullstack inspirada em redes sociais como o Facebook, permitindo que usuários compartilhem posts, interajam entre si e gerenciem seus perfis.
+
+O projeto foi desenvolvido com React (Vite) no frontend e Node.js + Express no backend, utilizando MongoDB, JWT para autenticação e Cloudinary para upload de imagens.
+
+## 📸 Prévia da Aplicação
+
 <p align="center">
- <img width="1916" height="807" alt="SocialMedia" src="https://github.com/user-attachments/assets/dda20690-4069-460a-bbf7-92b68616f914" alt="image"/>
+ <img width="1285" height="791" alt="image" src="https://github.com/user-attachments/assets/dda20690-4069-460a-bbf7-92b68616f914" />
 </p>
 
-# Social Media App
+## 🚀 Tecnologias Utilizadas
 
-Aplicação fullstack de rede social desenvolvida com React, Context API, Node.js, Express e MongoDB.
+🖥️ Frontend
 
-## 🚀 Tecnologias
+- ⚛️ React + Vite — Interface rápida e moderna
+- 🗂️ Context Api — Gerenciamento de estado global
+- 🔐 JWT Decode — Controle de autenticação no client
+- 🎨 CSS Modules — Estilização
 
-### Frontend
-- React 19
-- Vite
-- React Router DOM
-- Context API
-- Material UI
-- CSS Modules
+⚙️ Backend
 
-### Backend
-- Node.js
-- Express
-- MongoDB + Mongoose
-- JWT (Autenticação)
-- Multer (Upload de imagens)
-- Express Validator
+- 🟢 Node.js + Express — API REST
+- 🍃 MongoDB + Mongoose — Banco de dados
+- 🔐 JWT (JSON Web Token) — Autenticação segura
+- ☁️ Cloudinary — Upload e armazenamento de imagens
+- 📦 Multer — Upload de arquivos
 
-## 🔐 Funcionalidades
-- Registro e login de usuários
-- Autenticação com JWT
+## 📦 Funcionalidades
+
+1. 🔐 **Autenticação**
+
+- Registro e login de usuários com JWT
+- Proteção de rotas privadas
 - Logout automático ao expirar o token
-- Criar e visualizar posts com imagem
-- Follow / Unfollow de usuários
-- Visualizar perfil e amigos
-- Upload de fotos (perfil e posts)
 
-## 📁 Variáveis de Ambiente
+2. 📝 **Posts**
 
-### Backend (.env)
-- PORT=8800
-- MONGO_URI=mongodb://localhost:27017/social_media
-- JWT_SECRET=your_secret
-- BASE_URL=http://localhost:8800
+- Criar posts com imagem
+- Listar posts (feed)
+- Curtir / descurtir / comentar posts
+- Editar posts
+- Excluir posts
+- Visualizar detalhes do postt
 
-### Frontend (.env)
-- VITE_API_URL=http://localhost:8800
-- VITE_UPLOADS_URL=http://localhost:8800/uploads
+3. 📊 **Dashboard do Usuário**
 
-▶️ Como rodar o projeto
-### Backend
-- cd client
-- npm install
-- npm run dev
+- Visualizar dados do usuário
+- Listar posts do usuário
+- Editar perfil
 
-### Frontend
-- cd client
-- npm install
-- npm run dev
+4. ⚡ UX e Estado
 
-📌 Status
-- Projeto em desenvolvimento contínuo.
+- Atualização do feed em tempo real (Context Api)
+- Mensagens de sucesso/erro
+- Controle de loading
 
+5. 🔐Segurança
+   -Tokens JWT com expiração (1h)
+   -Logout automático no frontend ao expirar
+   -Validação de token no backend
+   -Proteção de rotas-
 
+## 🚧 Funcionalidades em Desenvolvimento
+
+As seguintes funcionalidades ainda estão sendo implementadas:
+
+- 📱 Responsividade completa
+- ✏️ Edição de perfil
+- 📝 Editar e excluir posts
+- 💬 Modal de comentários
+- 💬 Conversas simultâneas (chat em tempo real)
+- 🔔 Notificações de novos posts de amigos
+- 🤝 Sistema de amizade (convites)
+- 🟢 Lista de amigos online
+
+## 🛠️ Pré-requisitos
+
+Antes de começar:
+
+- Node.js(v18+ recomendado) https://nodejs.org/ [Node](https://nodejs.org/)
+- npm ou yarn
+- Conta no Cloudinary [Cloudinary](https://www.cloudinary.com)
+- Instância do MongoDB (local ou Atlas) [MongoDB](https://www.mongodb.com/)
+
+---
+
+### 🤝 Como Contribuir
+
+1. Faça um fork deste repositório.
+2. Crie uma branch para sua feature (git checkout -b minha-feature).
+3. Commit suas alterações (git commit -m 'Adiciona minha feature').
+4. Faça o push para a branch (git push origin minha-feature).
+5. Abra um Pull Request.
