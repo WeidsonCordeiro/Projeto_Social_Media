@@ -43,21 +43,28 @@ export const AuthContextProvider = ({ children }) => {
     if (!state.user?.token) return;
 
     const expirationTime = getTokenExpiration(state.user.token);
-    if (!expirationTime) return;
+
+    if (!expirationTime) {
+      dispatch(logout());
+      dispatch(reset());
+      return;
+    }
 
     const timeLeft = expirationTime - Date.now();
 
     if (timeLeft <= 0) {
       dispatch(logout());
+      dispatch(reset());
       return;
     }
 
     const timer = setTimeout(() => {
       dispatch(logout());
+      dispatch(reset());
     }, timeLeft);
 
     return () => clearTimeout(timer);
-  }, [state.user]);
+  }, [state.user, dispatch]);
 
   return (
     <AuthContext.Provider

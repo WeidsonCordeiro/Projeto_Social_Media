@@ -1,7 +1,10 @@
+//Components
+import { jwtDecode } from "jwt-decode";
+
 export const getTokenExpiration = (token) => {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp * 1000; // converte para ms
+    const decoded = jwtDecode(token);
+    return decoded.exp * 1000;
   } catch {
     return null;
   }

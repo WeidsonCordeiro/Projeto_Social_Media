@@ -35,7 +35,7 @@ const Profile = () => {
           `/api/users/username/${encodeURIComponent(username)}`,
           config
         );
-        debugger;
+
         const result = await res.json();
 
         if (result.errors) {
@@ -72,7 +72,7 @@ const Profile = () => {
             <div className={styles.profileCover}>
               <img
                 className={styles.profileCoverImg}
-                src={user.coverPicture}
+                src={user.coverPicture ? user.coverPicture : CoverImage}
                 alt=""
               />
               <Link to={`/profile/${user.username}`}>

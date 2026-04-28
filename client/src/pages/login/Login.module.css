@@ -93,3 +93,29 @@
   font-weight: 500;
   cursor: pointer;
 }
+
+.inputWrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.inputWrapper input {
+  width: 100%;
+}
+
+.visibilityIcon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.visibilityIcon {
+  color: #999;
+}
+
+.visibilityIcon.active {
+  color: #000;
+}

@@ -1,3 +1,4 @@
+const cloudinary = require("../utils/cloudinary");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
@@ -5,24 +6,51 @@ const mongoose = require("mongoose");
 //Register Post
 const setPost = async (req, res) => {
   try {
-    // Validate request body
     const { userId, description } = req.body;
-    const img = req.file ? req.file.filename : null;
+    let imageUrl = null;
+    let publicId = null;
+
     if (!userId || !description) {
       return res
         .status(400)
         .json({ errors: ["Campos obrigatórios não foram preenchidos!"] });
     }
 
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "social_media/posts" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+
+        stream.end(req.file.buffer);
+      });
+
+      imageUrl = uploadResult.secure_url;
+      publicId = uploadResult.public_id;
+    }
+
     // Create new post
     const newPost = new Post({
       userId,
       description,
-      img,
+      img: imageUrl,
     });
 
+    //If Photo is created successfully
+    if (!newPost) {
+      return res.status(422).json({ erros: ["Erro ao criar a Post!"] });
+    }
+
     const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
+
+    res.status(201).json({
+      message: "Post registado com sucesso",
+      post: savedPost,
+    });
   } catch (error) {
     console.error("Erro ao registar Post:", error);
     return res

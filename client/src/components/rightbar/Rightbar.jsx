@@ -15,7 +15,6 @@ import styles from "./Rightbar.module.css";
 
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
-import { userImageUrl } from "../../utils/imageUrl";
 
 //Icons assets
 import noPicture from "../../assets/person/noPicture.webp";
@@ -175,9 +174,7 @@ const Rightbar = ({ user }) => {
                 <img
                   className={styles.rightbarFollowingImg}
                   src={
-                    friend.profilePicture
-                      ? userImageUrl(friend.profilePicture)
-                      : noPicture
+                    friend.profilePicture ? friend.profilePicture : noPicture
                   }
                   alt=""
                 />

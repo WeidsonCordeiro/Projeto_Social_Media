@@ -11,6 +11,8 @@ import { requestConfig } from "../../utils/config";
 
 //Material UI
 import { CircularProgress } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 //Css
 import styles from "./Register.module.css";
@@ -20,6 +22,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { dispatch } = useContext(AuthContext);
@@ -90,20 +94,46 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <input
-              placeholder="Password"
-              type="password"
-              className={styles.loginInput}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-              placeholder="Password Again"
-              type="password"
-              className={styles.loginInput}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <div className={styles.inputWrapper}>
+              <input
+                className={styles.loginInput}
+                type={showPassword ? "text" : "password"}
+                value={password}
+                min={6}
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <span
+                className={`${styles.visibilityIcon} ${
+                  showPassword ? "active" : ""
+                }`}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </span>
+            </div>
+            <div className={styles.inputWrapper}>
+              <input
+                className={styles.loginInput}
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                min={6}
+                placeholder="Password Again"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <span
+                className={`${styles.visibilityIcon} ${
+                  showConfirmPassword ? "active" : ""
+                }`}
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+              >
+                {showConfirmPassword ? (
+                  <VisibilityOffIcon />
+                ) : (
+                  <VisibilityIcon />
+                )}
+              </span>
+            </div>
             <button
               type="submit"
               className={styles.loginButton}

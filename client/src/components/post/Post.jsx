@@ -15,7 +15,6 @@ import { MoreVert } from "@mui/icons-material";
 
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
-import { postImageUrl, userImageUrl } from "../../utils/imageUrl";
 
 // Icons assets
 import likeSvg from "../../assets/icons/1.like.svg";
@@ -104,11 +103,7 @@ const Post = ({ post }) => {
             <Link to={`/profile/${user.username}`}>
               <img
                 className={styles.postProfileImg}
-                src={
-                  user.profilePicture
-                    ? userImageUrl(user.profilePicture)
-                    : noPicture
-                }
+                src={user.profilePicture ? user.profilePicture : noPicture}
                 alt=""
               />
             </Link>
@@ -121,11 +116,7 @@ const Post = ({ post }) => {
         </div>
         <div className={styles.postCenter}>
           <span className={styles.postText}>{post.description} </span>
-          <img
-            className={styles.postImg}
-            src={post.img ? postImageUrl(post.img) : null}
-            alt=""
-          />
+          <img className={styles.postImg} src={post.img} alt="" />
         </div>
         <div className={styles.postBottom}>
           <div className={styles.postBottomLeft}>
@@ -149,7 +140,7 @@ const Post = ({ post }) => {
           <div className={styles.postBottomRight}>
             <span
               className={styles.postCommentText}
-            >{`${post.comment} comment(s)`}</span>
+            >{`${post.comments.length} comment(s)`}</span>
           </div>
         </div>
       </div>

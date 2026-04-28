@@ -7,6 +7,8 @@ import { AuthContext } from "../../context/AuthContext";
 
 //Material UI
 import { CircularProgress } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 //Css
 import styles from "./Login.module.css";
@@ -14,6 +16,7 @@ import styles from "./Login.module.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { user, isFetching, error, dispatch } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
@@ -52,14 +55,24 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <input
-              placeholder="Password"
-              type="password"
-              className={styles.loginInput}
-              min={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className={styles.inputWrapper}>
+              <input
+                className={styles.loginInput}
+                type={showPassword ? "text" : "password"}
+                value={password}
+                min={6}
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <span
+                className={`${styles.visibilityIcon} ${
+                  showPassword ? "active" : ""
+                }`}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </span>
+            </div>
             <button
               type="submit"
               className={styles.loginButton}

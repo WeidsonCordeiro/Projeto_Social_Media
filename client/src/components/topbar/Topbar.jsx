@@ -77,7 +77,9 @@ const Topbar = () => {
       </div>
       <div className={styles.topbarRight}>
         <div className={styles.topbarLinks}>
-          <span className={styles.topbarLink}>Homepage</span>
+          <Link to="/" className={styles.linkStyle}>
+            <span className={styles.topbarLink}>Homepage</span>
+          </Link>
           <span className={styles.topbarLink}>Timeline</span>
         </div>
         <div className={styles.topbarIcons}>
