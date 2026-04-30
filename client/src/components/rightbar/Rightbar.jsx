@@ -17,7 +17,7 @@ import styles from "./Rightbar.module.css";
 import { requestConfig, getToLocalStorage } from "../../utils/config";
 
 //Icons assets
-import noPicture from "../../assets/person/noPicture.webp";
+import noAvatar from "../../assets/person/noAvatar.webp";
 
 const Rightbar = ({ user }) => {
   const [friends, setFriends] = useState([]);
@@ -62,8 +62,6 @@ const Rightbar = ({ user }) => {
     const token = getToLocalStorage("user")?.token;
     const config = requestConfig("PUT", { userId: currentUser._id }, token);
 
-    console.log(user);
-    console.log(currentUser);
     try {
       setLoading(true);
       let res;
@@ -174,7 +172,9 @@ const Rightbar = ({ user }) => {
                 <img
                   className={styles.rightbarFollowingImg}
                   src={
-                    friend.profilePicture ? friend.profilePicture : noPicture
+                    friend.profilePicture?.url
+                      ? friend.profilePicture.url
+                      : noAvatar
                   }
                   alt=""
                 />

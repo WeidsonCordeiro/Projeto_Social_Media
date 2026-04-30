@@ -13,10 +13,6 @@ import styles from "./Topbar.module.css";
 //Icons
 import { Person, Chat, Notifications, Search } from "@mui/icons-material";
 
-//Images
-import ProfilePic from "../../assets/person/1.webp";
-import noPicture from "../../assets/person/noPicture.webp";
-
 const Topbar = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
@@ -80,7 +76,9 @@ const Topbar = () => {
           <Link to="/" className={styles.linkStyle}>
             <span className={styles.topbarLink}>Homepage</span>
           </Link>
-          <span className={styles.topbarLink}>Timeline</span>
+          <Link to={`/profile/${user.username}`} className={styles.linkStyle}>
+            <span className={styles.topbarLink}>Timeline</span>
+          </Link>
         </div>
         <div className={styles.topbarIcons}>
           <div className={styles.topbarIconItem}>
@@ -98,9 +96,9 @@ const Topbar = () => {
         </div>
         <Link to={`/profile/${user.username}`} className={styles.linkStyle}>
           <img
-            src={user.profilePicture || noPicture}
-            alt=""
             className={styles.topbarImg}
+            src={user.profilePicture?.url ? user.profilePicture.url : null}
+            alt=""
           />
         </Link>
       </div>

@@ -3,6 +3,9 @@ import Topbar from "../../components/Topbar/Topbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Feed from "../../components/Feed/Feed";
 import Rightbar from "../../components/Rightbar/Rightbar";
+import EditCoverModal from "../../components/editCoverModal/EditCoverModal";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 //Hooks
 import { useState, useEffect } from "react";
@@ -11,10 +14,12 @@ import { Link, useParams } from "react-router-dom";
 //Css
 import styles from "./Profile.module.css";
 
-//Profile Page
-import ProfileImage from "../../assets/person/2.webp";
-import CoverImage from "../../assets/img/cover.webp";
-import noPicture from "../../assets/person/noPicture.webp";
+//Material UI
+import EditIcon from "@mui/icons-material/Edit";
+
+//Icons assets
+import noAvatar from "../../assets/person/noAvatar.webp";
+import noCover from "../../assets/person/noCover.webp";
 
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
@@ -23,7 +28,9 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showEditCover, setShowEditCover] = useState(false);
   const { username } = useParams();
+  const { user: userCredentials } = useContext(AuthContext);
 
   useEffect(() => {
     setLoading(true);
@@ -72,13 +79,45 @@ const Profile = () => {
             <div className={styles.profileCover}>
               <img
                 className={styles.profileCoverImg}
-                src={user.coverPicture ? user.coverPicture : CoverImage}
+                src={user.coverPicture?.url ? user.coverPicture.url : noCover}
                 alt=""
               />
+              {userCredentials._id === user._id && (
+                <span
+                  className={styles.editIcon}
+                  onClick={() => setShowEditCover(true)}
+                >
+                  <EditIcon />
+                </span>
+              )}
+              {showEditCover && (
+                <EditCoverModal
+                  imageCover={
+                    user.coverPicture?.url ? user.coverPicture.url : noCover
+                  }
+                  onClose={() => setShowEditCover(false)}
+                  onSave={(data) => {
+                    // aqui você chama sua API / dispatch
+                    // onSave={async (data) => {
+                    //   if (data.image === null) {
+                    //     // remover cover
+                    //   } else {
+                    //     // upload nova imagem
+                    //   }
+                    // }}
+                    console.log("Salvar cover:", data);
+                    setShowEditCover(false);
+                  }}
+                />
+              )}
               <Link to={`/profile/${user.username}`}>
                 <img
                   className={styles.profileUserImg}
-                  src={user.profilePicture ? user.profilePicture : noPicture}
+                  src={
+                    user.profilePicture?.url
+                      ? user.profilePicture.url
+                      : noAvatar
+                  }
                   alt=""
                 />
               </Link>

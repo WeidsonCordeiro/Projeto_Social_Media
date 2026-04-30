@@ -12,9 +12,6 @@ import { Link } from "react-router-dom";
 //Css
 import styles from "./Share.module.css";
 
-//Images
-import noPicture from "../../assets/person/noPicture.webp";
-
 //Icons
 import {
   PermMedia,
@@ -140,7 +137,7 @@ const Share = ({ onPostCreated }) => {
           <Link to={`/profile/${user.username}`}>
             <img
               className={styles.shareProfileImg}
-              src={user.profilePicture || noPicture}
+              src={user.profilePicture?.url ? user.profilePicture.url : null}
               alt=""
             />
           </Link>

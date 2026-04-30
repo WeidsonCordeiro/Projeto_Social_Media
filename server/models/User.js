@@ -14,12 +14,24 @@ const UserSchema = new mongoose.Schema(
       type: String,
     },
     profilePicture: {
-      type: String,
-      default: "",
+      url: {
+        type: String,
+        default: "",
+      },
+      publicId: {
+        type: String,
+        default: "",
+      },
     },
     coverPicture: {
-      type: String,
-      default: "",
+      url: {
+        type: String,
+        default: "",
+      },
+      publicId: {
+        type: String,
+        default: "",
+      },
     },
     followers: {
       type: Array,

@@ -19,7 +19,6 @@ import { requestConfig, getToLocalStorage } from "../../utils/config";
 // Icons assets
 import likeSvg from "../../assets/icons/1.like.svg";
 import heartWebp from "../../assets/icons/2.coracao.webp";
-import noPicture from "../../assets/person/noPicture.webp";
 
 const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes || []);
@@ -103,7 +102,7 @@ const Post = ({ post }) => {
             <Link to={`/profile/${user.username}`}>
               <img
                 className={styles.postProfileImg}
-                src={user.profilePicture ? user.profilePicture : noPicture}
+                src={user.profilePicture?.url ? user.profilePicture.url : null}
                 alt=""
               />
             </Link>

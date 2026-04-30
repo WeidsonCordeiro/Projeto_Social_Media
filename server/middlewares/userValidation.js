@@ -74,7 +74,7 @@ const userUpdateValidation = () => {
       .withMessage("A senha deve ter pelo menos 6 caracteres!"),
     body("profilePicture").optional(),
     body("coverPicture").optional(),
-    body("desc")
+    body("description")
       .optional()
       .isString()
       .withMessage("A descrição deve ser uma string!")
@@ -95,6 +95,10 @@ const userUpdateValidation = () => {
       .bail()
       .isLength({ min: 3 })
       .withMessage("A senha deve ter pelo menos 3 caracteres!"),
+    body("relationship")
+      .optional()
+      .isNumeric()
+      .withMessage("O estado civil deve ser um numero!"),
   ];
 };
 

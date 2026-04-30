@@ -66,7 +66,7 @@ const Login = () => {
               />
               <span
                 className={`${styles.visibilityIcon} ${
-                  showPassword ? "active" : ""
+                  showPassword ? styles.active : ""
                 }`}
                 onClick={() => setShowPassword((prev) => !prev)}
               >

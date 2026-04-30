@@ -105,7 +105,7 @@ const Register = () => {
               />
               <span
                 className={`${styles.visibilityIcon} ${
-                  showPassword ? "active" : ""
+                  showPassword ? styles.active : ""
                 }`}
                 onClick={() => setShowPassword((prev) => !prev)}
               >
@@ -123,7 +123,7 @@ const Register = () => {
               />
               <span
                 className={`${styles.visibilityIcon} ${
-                  showConfirmPassword ? "active" : ""
+                  showConfirmPassword ? styles.active : ""
                 }`}
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
               >

@@ -71,38 +71,89 @@ const getCurrentUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const updates = req.body;
-
     const reqUser = req.user;
+
     const user = await User.findById(reqUser._id).select("-password");
 
-    // Ensure there is something to update
-    if (!updates) {
+    if (!user) {
+      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+    }
+
+    const { username, description, city, from, relationship } = req.body;
+
+    const updates = { username, description, city, from, relationship };
+
+    const hasUpdates =
+      Object.keys(updates).some((key) => updates[key] !== undefined) ||
+      req.files?.profilePicture ||
+      req.files?.coverPicture;
+
+    if (!hasUpdates) {
       return res
         .status(400)
         .json({ errors: ["Nenhuma informação foi enviada para atualizar!"] });
     }
 
-    const { password, email, isAdmin, ...allowedUpdates } = updates;
+    // =====================
+    // PROFILE PICTURE
+    // =====================
+    if (req.files?.profilePicture) {
+      if (user.profilePicture?.publicId) {
+        await cloudinary.uploader.destroy(user.profilePicture.publicId);
+      }
 
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      allowedUpdates.password = await bcrypt.hash(password, salt);
+      const uploadProfile = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "social_media/users/profile" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.files.profilePicture[0].buffer);
+      });
+
+      updates.profilePicture = {
+        url: uploadProfile.secure_url,
+        publicId: uploadProfile.public_id,
+      };
     }
-    // Update the user
+
+    // =====================
+    // COVER PICTURE
+    // =====================
+    if (req.files?.coverPicture) {
+      if (user.coverPicture?.publicId) {
+        await cloudinary.uploader.destroy(user.coverPicture.publicId);
+      }
+
+      const uploadCover = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "social_media/users/cover" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.files.coverPicture[0].buffer);
+      });
+
+      updates.coverPicture = {
+        url: uploadCover.secure_url,
+        publicId: uploadCover.public_id,
+      };
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
-      { $set: allowedUpdates },
-      { new: true, runValidators: true },
+      { $set: updates },
+      { new: true, runValidators: true }
     ).select("-password");
 
-    if (!updatedUser) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
-    }
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Erro ao atualizar usuário:", error);
-    return res.status(500).json({ errors: ["Erro ao atualizar usuário!"] });
+    res.status(500).json({ errors: ["Erro ao atualizar usuário!"] });
   }
 };
 
@@ -206,7 +257,7 @@ const getFriendsById = async (req, res) => {
     const friends = await Promise.all(
       user.followings.map((friendId) => {
         return User.findById(friendId).select("_id username profilePicture");
-      }),
+      })
     );
     res.status(200).json(friends);
   } catch (error) {
@@ -269,7 +320,7 @@ const userUnFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você não segue este usuário!"] });
     }
     currentUser.followings = currentUser.followings.filter(
-      (id) => id.toString() !== userId,
+      (id) => id.toString() !== userId
     );
     await currentUser.save();
     res.status(200).json({ message: "Usuário deixado de seguir com sucesso!" });

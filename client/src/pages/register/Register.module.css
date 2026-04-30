@@ -106,12 +106,9 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-}
-
-.visibilityIcon {
   color: #999;
 }
 
-.visibilityIcon.active {
+.active {
   color: #000;
 }

@@ -46,7 +46,6 @@ export const AuthContextProvider = ({ children }) => {
 
     if (!expirationTime) {
       dispatch(logout());
-      dispatch(reset());
       return;
     }
 
@@ -54,13 +53,11 @@ export const AuthContextProvider = ({ children }) => {
 
     if (timeLeft <= 0) {
       dispatch(logout());
-      dispatch(reset());
       return;
     }
 
     const timer = setTimeout(() => {
       dispatch(logout());
-      dispatch(reset());
     }, timeLeft);
 
     return () => clearTimeout(timer);
