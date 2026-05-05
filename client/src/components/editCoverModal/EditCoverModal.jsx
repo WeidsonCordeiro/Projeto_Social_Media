@@ -40,7 +40,7 @@ export default function EditCoverModal({ imageCover, onClose, onSave }) {
       return;
     }
     onSave({
-      img: removed ? null : file,
+      coverPicture: removed ? null : file,
     });
   };
 

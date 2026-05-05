@@ -40,7 +40,7 @@ const Profile = () => {
       try {
         const res = await fetch(
           `/api/users/username/${encodeURIComponent(username)}`,
-          config
+          config,
         );
 
         const result = await res.json();
@@ -96,7 +96,44 @@ const Profile = () => {
                     user.coverPicture?.url ? user.coverPicture.url : noCover
                   }
                   onClose={() => setShowEditCover(false)}
-                  onSave={(data) => {
+                  onSave={async (data) => {
+                    if (Object.keys(data).length > 0) {
+                      const formData = new FormData();
+
+                      if (data.coverPicture === null) {
+                        formData.append("removeCoverPicture", "true");
+                      } else if (data.coverPicture) {
+                        formData.append("coverPicture", data.coverPicture);
+                      }
+
+                      try {
+                        setLoading(true);
+                        const token = getToLocalStorage("user")?.token;
+                        const config = requestConfig("PUT", formData, token);
+
+                        const res = await fetch(`/api/users/`, config);
+
+                        const result = await res.json();
+
+                        if (result.errors) {
+                          setError(result.errors);
+                          setLoading(false);
+                          return;
+                        }
+
+                        setUser(result);
+                        setShowEditCover(false);
+                      } catch (error) {
+                        console.error("Error updating cover users:", error);
+                        setLoading(false);
+                        setError("Error updating cover users!");
+                        setUser({});
+                      } finally {
+                        setLoading(false);
+                        setShowEditCover(false);
+                      }
+                    }
+
                     // aqui você chama sua API / dispatch
                     // onSave={async (data) => {
                     //   if (data.image === null) {
@@ -105,8 +142,6 @@ const Profile = () => {
                     //     // upload nova imagem
                     //   }
                     // }}
-                    console.log("Salvar cover:", data);
-                    setShowEditCover(false);
                   }}
                 />
               )}

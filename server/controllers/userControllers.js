@@ -72,6 +72,7 @@ const getCurrentUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const reqUser = req.user;
+    const removeCoverPicture = req.body.removeCoverPicture === "true";
 
     const user = await User.findById(reqUser._id).select("-password");
 
@@ -81,12 +82,19 @@ const updateUser = async (req, res) => {
 
     const { username, description, city, from, relationship } = req.body;
 
-    const updates = { username, description, city, from, relationship };
+    const updates = {};
+
+    if (username !== undefined) updates.username = username;
+    if (description !== undefined) updates.description = description;
+    if (city !== undefined) updates.city = city;
+    if (from !== undefined) updates.from = from;
+    if (relationship !== undefined) updates.relationship = relationship;
 
     const hasUpdates =
-      Object.keys(updates).some((key) => updates[key] !== undefined) ||
+      Object.keys(updates).length > 0 ||
       req.files?.profilePicture ||
-      req.files?.coverPicture;
+      req.files?.coverPicture ||
+      removeCoverPicture;
 
     if (!hasUpdates) {
       return res
@@ -108,7 +116,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
         stream.end(req.files.profilePicture[0].buffer);
       });
@@ -122,7 +130,13 @@ const updateUser = async (req, res) => {
     // =====================
     // COVER PICTURE
     // =====================
-    if (req.files?.coverPicture) {
+    if (removeCoverPicture && user.coverPicture) {
+      if (user.coverPicture?.publicId) {
+        await cloudinary.uploader.destroy(user.coverPicture.publicId);
+      }
+
+      updates.coverPicture = null;
+    } else if (req.files?.coverPicture) {
       if (user.coverPicture?.publicId) {
         await cloudinary.uploader.destroy(user.coverPicture.publicId);
       }
@@ -133,7 +147,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
         stream.end(req.files.coverPicture[0].buffer);
       });
@@ -147,7 +161,7 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
       { $set: updates },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select("-password");
 
     res.status(200).json(updatedUser);
@@ -257,7 +271,7 @@ const getFriendsById = async (req, res) => {
     const friends = await Promise.all(
       user.followings.map((friendId) => {
         return User.findById(friendId).select("_id username profilePicture");
-      })
+      }),
     );
     res.status(200).json(friends);
   } catch (error) {
@@ -320,7 +334,7 @@ const userUnFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você não segue este usuário!"] });
     }
     currentUser.followings = currentUser.followings.filter(
-      (id) => id.toString() !== userId
+      (id) => id.toString() !== userId,
     );
     await currentUser.save();
     res.status(200).json({ message: "Usuário deixado de seguir com sucesso!" });
