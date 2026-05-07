@@ -16,7 +16,8 @@ import { MoreVert } from "@mui/icons-material";
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
 
-// Icons assets
+//Icons assets
+import noAvatar from "../../assets/person/noAvatar.webp";
 import likeSvg from "../../assets/icons/1.like.svg";
 import heartWebp from "../../assets/icons/2.coracao.webp";
 
@@ -102,7 +103,9 @@ const Post = ({ post }) => {
             <Link to={`/profile/${user.username}`}>
               <img
                 className={styles.postProfileImg}
-                src={user.profilePicture?.url ? user.profilePicture.url : null}
+                src={
+                  user.profilePicture?.url ? user.profilePicture.url : noAvatar
+                }
                 alt=""
               />
             </Link>

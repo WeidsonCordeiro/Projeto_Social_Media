@@ -12,6 +12,9 @@ import { Link } from "react-router-dom";
 //Css
 import styles from "./Share.module.css";
 
+//Icons assets
+import noAvatar from "../../assets/person/noAvatar.webp";
+
 //Icons
 import {
   PermMedia,
@@ -41,7 +44,7 @@ const Share = ({ onPostCreated }) => {
       try {
         const res = await fetch(
           `/api/users/username/${encodeURIComponent(currentUser.username)}`,
-          config
+          config,
         );
         const result = await res.json();
 
@@ -137,7 +140,9 @@ const Share = ({ onPostCreated }) => {
           <Link to={`/profile/${user.username}`}>
             <img
               className={styles.shareProfileImg}
-              src={user.profilePicture?.url ? user.profilePicture.url : null}
+              src={
+                user.profilePicture?.url ? user.profilePicture.url : noAvatar
+              }
               alt=""
             />
           </Link>

@@ -4,8 +4,12 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import Feed from "../../components/Feed/Feed";
 import Rightbar from "../../components/Rightbar/Rightbar";
 import EditCoverModal from "../../components/editCoverModal/EditCoverModal";
+import EditProfileModal from "../../components/editProfileModal/EditProfileModal";
+
+//Hooks
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { updateUser } from "../../context/AuthActions";
 
 //Hooks
 import { useState, useEffect } from "react";
@@ -28,9 +32,10 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showEditProfile, setShowEditProfile] = useState(false);
   const [showEditCover, setShowEditCover] = useState(false);
   const { username } = useParams();
-  const { user: userCredentials } = useContext(AuthContext);
+  const { user: userCredentials, dispatch } = useContext(AuthContext);
 
   useEffect(() => {
     setLoading(true);
@@ -84,6 +89,7 @@ const Profile = () => {
               />
               {userCredentials._id === user._id && (
                 <span
+                  title="Edit Cover Picture"
                   className={styles.editIcon}
                   onClick={() => setShowEditCover(true)}
                 >
@@ -123,29 +129,35 @@ const Profile = () => {
 
                         setUser(result);
                         setShowEditCover(false);
+                        dispatch(updateUser(result));
                       } catch (error) {
-                        console.error("Error updating cover users:", error);
+                        console.error("Error updating cover user:", error);
                         setLoading(false);
-                        setError("Error updating cover users!");
+                        setError("Error updating cover user!");
                         setUser({});
                       } finally {
                         setLoading(false);
                         setShowEditCover(false);
                       }
                     }
-
-                    // aqui você chama sua API / dispatch
-                    // onSave={async (data) => {
-                    //   if (data.image === null) {
-                    //     // remover cover
-                    //   } else {
-                    //     // upload nova imagem
-                    //   }
-                    // }}
                   }}
                 />
               )}
-              <Link to={`/profile/${user.username}`}>
+              {userCredentials._id === user._id ? (
+                <Link to="#">
+                  <img
+                    title="Edit Profile Picture"
+                    onClick={() => setShowEditProfile(true)}
+                    className={styles.profileUserImg}
+                    src={
+                      user.profilePicture?.url
+                        ? user.profilePicture.url
+                        : noAvatar
+                    }
+                    alt="Profile Picture"
+                  />
+                </Link>
+              ) : (
                 <img
                   className={styles.profileUserImg}
                   src={
@@ -153,19 +165,62 @@ const Profile = () => {
                       ? user.profilePicture.url
                       : noAvatar
                   }
-                  alt=""
+                  alt="Profile Picture"
                 />
-              </Link>
+              )}
+              {showEditProfile && (
+                <EditProfileModal
+                  imagePicture={
+                    user.profilePicture?.url
+                      ? user.profilePicture.url
+                      : noAvatar
+                  }
+                  onClose={() => setShowEditProfile(false)}
+                  onSave={async (data) => {
+                    if (Object.keys(data).length > 0) {
+                      const formData = new FormData();
+
+                      if (data.profilePicture === null) {
+                        formData.append("removeProfilePicture", "true");
+                      } else if (data.profilePicture) {
+                        formData.append("profilePicture", data.profilePicture);
+                      }
+
+                      try {
+                        setLoading(true);
+                        const token = getToLocalStorage("user")?.token;
+                        const config = requestConfig("PUT", formData, token);
+
+                        const res = await fetch(`/api/users/`, config);
+
+                        const result = await res.json();
+
+                        if (result.errors) {
+                          setError(result.errors);
+                          setLoading(false);
+                          return;
+                        }
+
+                        setUser(result);
+                        setShowEditProfile(false);
+                        dispatch(updateUser(result));
+                      } catch (error) {
+                        console.error("Error updating profile user:", error);
+                        setLoading(false);
+                        setError("Error updating profile user!");
+                        setUser({});
+                      } finally {
+                        setLoading(false);
+                        setShowEditProfile(false);
+                      }
+                    }
+                  }}
+                />
+              )}
             </div>
             <div className={styles.profileInfo}>
               <h4 className={styles.profileInfoName}>{user.username}</h4>
-              <span className={styles.profileInfoDesc}>{user.desc}</span>
-              {/* <div className={styles.profileInfoDetails}>
-                <div className={styles.profileInfoItem}>
-                  <PermIdentity className={styles.profileInfoIcon} />
-                  <span className={styles.profileInfoText}>johndoe99</span>
-                </div>
-              </div> */}
+              <span className={styles.profileInfoDesc}>{user.description}</span>
             </div>
           </div>
           <div className={styles.profileRightBottom}>

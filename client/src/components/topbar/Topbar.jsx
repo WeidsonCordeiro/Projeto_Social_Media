@@ -10,6 +10,9 @@ import { requestConfig, getToLocalStorage } from "../../utils/config";
 //Css
 import styles from "./Topbar.module.css";
 
+//Icons assets
+import noAvatar from "../../assets/person/noAvatar.webp";
+
 //Icons
 import { Person, Chat, Notifications, Search } from "@mui/icons-material";
 
@@ -27,7 +30,7 @@ const Topbar = () => {
       try {
         const res = await fetch(
           `/api/users/username/${encodeURIComponent(currentUser.username)}`,
-          config
+          config,
         );
         const result = await res.json();
 
@@ -97,7 +100,7 @@ const Topbar = () => {
         <Link to={`/profile/${user.username}`} className={styles.linkStyle}>
           <img
             className={styles.topbarImg}
-            src={user.profilePicture?.url ? user.profilePicture.url : null}
+            src={user.profilePicture?.url ? user.profilePicture.url : noAvatar}
             alt=""
           />
         </Link>

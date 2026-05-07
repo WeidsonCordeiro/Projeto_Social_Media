@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Online from "../online/Online";
 import { AuthContext } from "../../context/AuthContext";
 import { follow, unfollow } from "../../context/AuthActions";
+import EditPersonalInfoModal from "../../components/editPersonalInfoModal/EditPersonalInfoModal";
 
 import { Add, FamilyRestroomTwoTone } from "@mui/icons-material";
 import { Remove } from "@mui/icons-material";
@@ -13,8 +14,12 @@ import { Remove } from "@mui/icons-material";
 //Css
 import styles from "./Rightbar.module.css";
 
+//Material UI
+import EditIcon from "@mui/icons-material/Edit";
+
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
+import { getRelationshipLabel } from "../../utils/getRelationshipLabel";
 
 //Icons assets
 import noAvatar from "../../assets/person/noAvatar.webp";
@@ -22,15 +27,16 @@ import noAvatar from "../../assets/person/noAvatar.webp";
 const Rightbar = ({ user }) => {
   const [friends, setFriends] = useState([]);
   const [followed, setFollowed] = useState(false);
+  const [showEditPersonalInfo, setShowEditPersonalInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { user: currentUser, dispatch } = useContext(AuthContext);
+  const { user: userCredentials, dispatch } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!currentUser?.followings || !user?._id) return;
+    if (!userCredentials?.followings || !user?._id) return;
 
-    setFollowed(currentUser.followings.includes(user._id));
-  }, [currentUser, user?._id]);
+    setFollowed(userCredentials.followings.includes(user._id));
+  }, [userCredentials, user?._id]);
 
   useEffect(() => {
     if (!user?._id) return;
@@ -60,7 +66,7 @@ const Rightbar = ({ user }) => {
 
   const handleClick = async () => {
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig("PUT", { userId: currentUser._id }, token);
+    const config = requestConfig("PUT", { userId: userCredentials._id }, token);
 
     try {
       setLoading(true);
@@ -134,7 +140,7 @@ const Rightbar = ({ user }) => {
   const ProfileRightbar = ({ user }) => {
     return (
       <>
-        {user.username !== currentUser.username && (
+        {user.username !== userCredentials.username && (
           <button className={styles.rightbarFollowButton} onClick={handleClick}>
             {followed ? (
               <>
@@ -153,12 +159,69 @@ const Rightbar = ({ user }) => {
             <span className={styles.rightbarInfoKey}>City:</span>
             <span className={styles.rightbarInfoValue}>{user.city}</span>
           </div>
-          <div className={styles.rightbarInfoItem}></div>
-          <span className={styles.rightbarInfoKey}>From:</span>
-          <span className={styles.rightbarInfoValue}>{user.from}</span>
-          <div className={styles.rightbarInfoItem}></div>
-          <span className={styles.rightbarInfoKey}>Relationship:</span>
-          <span className={styles.rightbarInfoValue}>{user.relationship}</span>
+          <div className={styles.rightbarInfoItem}>
+            <span className={styles.rightbarInfoKey}>From:</span>
+            <span className={styles.rightbarInfoValue}>{user.from}</span>
+          </div>
+          <div className={styles.rightbarInfoItem}>
+            <span className={styles.rightbarInfoKey}>Relationship:</span>
+            <span className={styles.rightbarInfoValue}>
+              {getRelationshipLabel(user.relationship)}
+            </span>
+          </div>
+          {userCredentials._id === user._id && (
+            <span
+              title="Edit Personal Information"
+              className={styles.editIcon}
+              onClick={() => setShowEditPersonalInfo(true)}
+            >
+              <EditIcon />
+            </span>
+          )}
+          {showEditPersonalInfo && (
+            <EditPersonalInfoModal
+              user={user}
+              onClose={() => setShowEditPersonalInfo(false)}
+              // onSave={async (data) => {
+              //   if (Object.keys(data).length > 0) {
+              //     const formData = new FormData();
+
+              //     if (data.coverPicture === null) {
+              //       formData.append("removeCoverPicture", "true");
+              //     } else if (data.coverPicture) {
+              //       formData.append("coverPicture", data.coverPicture);
+              //     }
+
+              //     try {
+              //       setLoading(true);
+              //       const token = getToLocalStorage("user")?.token;
+              //       const config = requestConfig("PUT", formData, token);
+
+              //       const res = await fetch(`/api/users/`, config);
+
+              //       const result = await res.json();
+
+              //       if (result.errors) {
+              //         setError(result.errors);
+              //         setLoading(false);
+              //         return;
+              //       }
+
+              //       setUser(result);
+              //       setShowEditCover(false);
+              //     } catch (error) {
+              //       console.error("Error updating cover users:", error);
+              //       setLoading(false);
+              //       setError("Error updating cover users!");
+              //       setUser({});
+              //     } finally {
+              //       setLoading(false);
+              //       setShowEditCover(false);
+              //     }
+              //   }
+              // }}
+            />
+          )}
         </div>
         <h4 className={styles.rightbarTitle}>User friends</h4>
         {friends.map((friend) => (

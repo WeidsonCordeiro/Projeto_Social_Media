@@ -73,6 +73,7 @@ const updateUser = async (req, res) => {
   try {
     const reqUser = req.user;
     const removeCoverPicture = req.body.removeCoverPicture === "true";
+    const removeProfilePicture = req.body.removeProfilePicture === "true";
 
     const user = await User.findById(reqUser._id).select("-password");
 
@@ -94,7 +95,8 @@ const updateUser = async (req, res) => {
       Object.keys(updates).length > 0 ||
       req.files?.profilePicture ||
       req.files?.coverPicture ||
-      removeCoverPicture;
+      removeCoverPicture ||
+      removeProfilePicture;
 
     if (!hasUpdates) {
       return res
@@ -105,7 +107,12 @@ const updateUser = async (req, res) => {
     // =====================
     // PROFILE PICTURE
     // =====================
-    if (req.files?.profilePicture) {
+    if (removeProfilePicture && user.profilePicture) {
+      if (user.profilePicture?.publicId) {
+        await cloudinary.uploader.destroy(user.profilePicture.publicId);
+      }
+      updates.profilePicture = null;
+    } else if (req.files?.profilePicture) {
       if (user.profilePicture?.publicId) {
         await cloudinary.uploader.destroy(user.profilePicture.publicId);
       }
@@ -134,7 +141,6 @@ const updateUser = async (req, res) => {
       if (user.coverPicture?.publicId) {
         await cloudinary.uploader.destroy(user.coverPicture.publicId);
       }
-
       updates.coverPicture = null;
     } else if (req.files?.coverPicture) {
       if (user.coverPicture?.publicId) {

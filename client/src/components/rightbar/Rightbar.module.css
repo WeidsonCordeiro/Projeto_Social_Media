@@ -3,7 +3,7 @@
 }
 
 .rightbarWrapper {
-  padding: 20px 20px 0 0;
+  padding: 20px 0 0 0;
 }
 
 .birthdayContainer {
@@ -42,6 +42,7 @@
 
 .rightbarInfo {
   margin-bottom: 30px;
+  position: relative;
 }
 
 .rightbarInfoItem {
@@ -104,4 +105,24 @@
 }
 .rightbarFollowButton:hover {
   background-color: #165ec9;
+}
+
+.editIcon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  top: -35px;
+  right: 10px;
+  background-color: #555;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  transition: 1s;
+}
+
+.editIcon:hover {
+  background-color: #fff;
 }

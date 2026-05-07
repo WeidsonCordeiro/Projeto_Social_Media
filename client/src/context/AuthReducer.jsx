@@ -24,6 +24,14 @@ const AuthReducer = (state, action) => {
         isFetching: false,
         error: false,
       };
+    case "UPDATE_USER":
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          ...action.payload,
+        },
+      };
     case "FOLLOW":
       return {
         ...state,
@@ -38,7 +46,7 @@ const AuthReducer = (state, action) => {
         user: {
           ...state.user,
           followings: state.user.followings.filter(
-            (following) => following !== action.payload
+            (following) => following !== action.payload,
           ),
         },
       };
