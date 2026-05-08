@@ -61,7 +61,13 @@ export default function EditProfileModal({ imagePicture, onClose, onSave }) {
 
         <div className={styles.content}>
           {preview ? (
-            <img src={preview} alt="Image cover preview" />
+            <div className={styles.imageContainer}>
+              <img
+                className={styles.profileUserImg}
+                src={preview}
+                alt="Image cover preview"
+              />
+            </div>
           ) : (
             <div className={styles.placeholder}>No cover image</div>
           )}
