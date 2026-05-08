@@ -23,7 +23,7 @@ const setPost = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
 
         stream.end(req.file.buffer);
@@ -97,7 +97,7 @@ const updatePost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { $set: { description, img } },
-      { new: true } // Return the updated document
+      { new: true }, // Return the updated document
     );
 
     res.status(200).json(updatedPost);
@@ -218,7 +218,7 @@ const commentPost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { $push: { comments: { userId, comment } } },
-      { new: true }
+      { new: true },
     );
 
     res
@@ -269,19 +269,15 @@ const getAllPostsByUserId = async (req, res) => {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
     }
 
-    const userPosts = await Post.find({ userId: currentUserId._id }).sort({
-      createdAt: -1,
-    });
+    const timelinePosts = await Post.find({
+      userId: {
+        $in: [currentUserId._id, ...currentUserId.followings],
+      },
+    })
+      .populate("userId", "username profilePicture")
+      .sort({ createdAt: -1 });
 
-    const friendPosts = await Promise.all(
-      currentUserId.followings.map((friendId) => {
-        return Post.find({ userId: friendId }).sort({
-          createdAt: -1,
-        });
-      })
-    );
-
-    return res.status(200).json(userPosts.concat(...friendPosts));
+    return res.status(200).json(timelinePosts);
   } catch (error) {
     console.error("Erro ao buscar timeline Posts by UserId:", error);
     return res.status(500).json({

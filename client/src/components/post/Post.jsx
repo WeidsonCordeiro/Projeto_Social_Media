@@ -23,20 +23,19 @@ import heartWebp from "../../assets/icons/2.coracao.webp";
 
 const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes || []);
-  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { user: currentUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const likeHandler = async () => {
-    if (!currentUser?._id) {
+    if (!user?._id) {
       setError("Faça login para dar like");
       return;
     }
 
     setLoading(true);
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig("PUT", { userId: currentUser._id }, token);
+    const config = requestConfig("PUT", { userId: user._id }, token);
     try {
       const res = await fetch(`/api/posts/likes/${post._id}`, config);
       const result = await res.json();
@@ -56,44 +55,6 @@ const Post = ({ post }) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    setLoading(true);
-
-    if (!post.userId) {
-      setUser({});
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        const token = getToLocalStorage("user")?.token;
-        const config = requestConfig("GET", null, token);
-
-        const res = await fetch(`/api/users/${post.userId}`, config);
-        const result = await res.json();
-
-        if (result.errors) {
-          setError(result.errors);
-          return;
-        }
-
-        setUser(result);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setUser({});
-        setError("Error fetching user!");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-
-    return () => {
-      setLoading(false);
-    };
-  }, [post.userId]);
 
   return (
     <div className={styles.postContainer}>

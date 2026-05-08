@@ -26,57 +26,20 @@ import {
 } from "@mui/icons-material";
 
 const Share = ({ onPostCreated }) => {
-  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [tags, setTags] = useState([]);
   const [location, setLocation] = useState("");
   const [feelings, setFeelings] = useState("");
-  const { user: currentUser } = useContext(AuthContext);
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchUser = async () => {
-      const token = getToLocalStorage("user")?.token;
-      const config = requestConfig("GET", null, token);
-      try {
-        const res = await fetch(
-          `/api/users/username/${encodeURIComponent(currentUser.username)}`,
-          config,
-        );
-        const result = await res.json();
-
-        if (result.errors) {
-          setError(result.errors);
-          return;
-        }
-
-        setUser(result);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setLoading(false);
-        setError("Error fetching users!");
-        setUser({});
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-
-    return () => {
-      setLoading(false);
-    };
-  }, [currentUser.username]);
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     const newPost = {
-      userId: currentUser._id,
+      userId: user._id,
       description,
       // tags,
       // location,

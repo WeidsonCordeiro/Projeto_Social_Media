@@ -17,46 +17,7 @@ import noAvatar from "../../assets/person/noAvatar.webp";
 import { Person, Chat, Notifications, Search } from "@mui/icons-material";
 
 const Topbar = () => {
-  const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const { user: currentUser } = useContext(AuthContext);
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchUser = async () => {
-      const token = getToLocalStorage("user")?.token;
-      const config = requestConfig("GET", null, token);
-      try {
-        const res = await fetch(
-          `/api/users/username/${encodeURIComponent(currentUser.username)}`,
-          config,
-        );
-        const result = await res.json();
-
-        if (result.errors) {
-          setError(result.errors);
-          setLoading(false);
-          return;
-        }
-
-        setUser(result);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setLoading(false);
-        setError("Error fetching users!");
-        setUser({});
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-
-    return () => {
-      setLoading(false);
-    };
-  }, [currentUser.username]);
+  const { user } = useContext(AuthContext);
 
   return (
     <div className={styles.topbarContainer}>

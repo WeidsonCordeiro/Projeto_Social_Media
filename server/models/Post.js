@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const PostSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     description: {
@@ -26,7 +27,7 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true },
   {
     collection: "posts",
-  }
+  },
 );
 
 const Post = mongoose.model("Post", PostSchema);

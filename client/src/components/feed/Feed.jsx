@@ -32,6 +32,7 @@ const Feed = ({ username }) => {
         setError(result.errors);
         return;
       }
+
       setPosts(result);
     } catch (error) {
       console.error("Error fetching posts:", error);
