@@ -1,12 +1,12 @@
 export const getRelationshipLabel = (value) => {
   switch (value) {
     case 1:
-      return "Solteiro";
+      return "Single";
     case 2:
-      return "Casado";
+      return "Married";
     case 3:
-      return "Divorciado";
+      return "Divorced";
     default:
-      return "Não informado";
+      return "Not specified";
   }
 };

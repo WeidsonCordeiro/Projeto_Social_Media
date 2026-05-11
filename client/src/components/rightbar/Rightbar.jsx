@@ -1,6 +1,7 @@
 //Hooks
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { updateUser } from "../../context/AuthActions";
 
 //Components
 import Online from "../online/Online";
@@ -157,11 +158,15 @@ const Rightbar = ({ user }) => {
         <div className={styles.rightbarInfo}>
           <div className={styles.rightbarInfoItem}>
             <span className={styles.rightbarInfoKey}>City:</span>
-            <span className={styles.rightbarInfoValue}>{user.city}</span>
+            <span className={styles.rightbarInfoValue}>
+              {user.city ? user.city : "Not specified"}
+            </span>
           </div>
           <div className={styles.rightbarInfoItem}>
             <span className={styles.rightbarInfoKey}>From:</span>
-            <span className={styles.rightbarInfoValue}>{user.from}</span>
+            <span className={styles.rightbarInfoValue}>
+              {user.from ? user.from : "Not specified"}
+            </span>
           </div>
           <div className={styles.rightbarInfoItem}>
             <span className={styles.rightbarInfoKey}>Relationship:</span>
@@ -182,44 +187,33 @@ const Rightbar = ({ user }) => {
             <EditPersonalInfoModal
               user={user}
               onClose={() => setShowEditPersonalInfo(false)}
-              // onSave={async (data) => {
-              //   if (Object.keys(data).length > 0) {
-              //     const formData = new FormData();
+              onSave={async (data) => {
+                try {
+                  setLoading(true);
+                  const token = getToLocalStorage("user")?.token;
+                  const config = requestConfig("PUT", data, token);
 
-              //     if (data.coverPicture === null) {
-              //       formData.append("removeCoverPicture", "true");
-              //     } else if (data.coverPicture) {
-              //       formData.append("coverPicture", data.coverPicture);
-              //     }
+                  const res = await fetch(`/api/users/`, config);
 
-              //     try {
-              //       setLoading(true);
-              //       const token = getToLocalStorage("user")?.token;
-              //       const config = requestConfig("PUT", formData, token);
+                  const result = await res.json();
 
-              //       const res = await fetch(`/api/users/`, config);
+                  if (result.errors) {
+                    setError(result.errors);
+                    setLoading(false);
+                    return;
+                  }
 
-              //       const result = await res.json();
-
-              //       if (result.errors) {
-              //         setError(result.errors);
-              //         setLoading(false);
-              //         return;
-              //       }
-
-              //       setUser(result);
-              //       setShowEditCover(false);
-              //     } catch (error) {
-              //       console.error("Error updating cover users:", error);
-              //       setLoading(false);
-              //       setError("Error updating cover users!");
-              //       setUser({});
-              //     } finally {
-              //       setLoading(false);
-              //       setShowEditCover(false);
-              //     }
-              //   }
-              // }}
+                  setShowEditPersonalInfo(false);
+                  dispatch(updateUser(result));
+                } catch (error) {
+                  console.error("Error updating personal info:", error);
+                  setLoading(false);
+                  setError("Error updating personal info!");
+                } finally {
+                  setLoading(false);
+                  setShowEditPersonalInfo(false);
+                }
+              }}
             />
           )}
         </div>

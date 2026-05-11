@@ -61,16 +61,18 @@ const Post = ({ post }) => {
       <div className={styles.postWrapper}>
         <div className={styles.postTop}>
           <div className={styles.postTopLeft}>
-            <Link to={`/profile/${user.username}`}>
+            <Link to={`/profile/${post.userId.username}`}>
               <img
                 className={styles.postProfileImg}
                 src={
-                  user.profilePicture?.url ? user.profilePicture.url : noAvatar
+                  post.userId.profilePicture?.url
+                    ? post.userId.profilePicture.url
+                    : noAvatar
                 }
                 alt=""
               />
             </Link>
-            <span className={styles.postUserName}>{user.username}</span>
+            <span className={styles.postUserName}>{post.userId.username}</span>
             <span className={styles.postDate}>{format(post.createdAt)}</span>
           </div>
           <div className={styles.postTopRight}>

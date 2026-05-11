@@ -27,6 +27,7 @@ import {
 
 const Share = ({ onPostCreated }) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [tags, setTags] = useState([]);
