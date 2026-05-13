@@ -30,13 +30,13 @@ const Post = ({ post, onPostCreated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useContext(AuthContext);
+  const isOwnProfile = post.userId._id === user._id;
 
   const likeHandler = async () => {
     if (!user?._id) {
       setError("Faça login para dar like");
       return;
     }
-
     setLoading(true);
     const token = getToLocalStorage("user")?.token;
     const config = requestConfig("PUT", { userId: user._id }, token);
@@ -123,26 +123,30 @@ const Post = ({ post, onPostCreated }) => {
             <span className={styles.postDate}>{format(post.createdAt)}</span>
           </div>
           <div className={styles.postTopRight}>
-            <div style={{ position: "relative" }}>
-              <MoreVert
-                style={{ cursor: "pointer" }}
-                onClick={() => setOpenDropdown(!openDropdown)}
-              />
-              <Dropdown
-                open={openDropdown}
-                onClose={() => setOpenDropdown(false)}
-                items={items}
-              />
-            </div>
-            <ConfirmModal
-              open={confirmOpen}
-              title="Delete post"
-              description="Are you sure you want to delete this post? This action cannot be undone."
-              confirmText="Delete"
-              cancelText="Cancel"
-              onCancel={() => setConfirmOpen(false)}
-              onConfirm={handleDeletePost}
-            />
+            {isOwnProfile && (
+              <>
+                <div style={{ position: "relative" }}>
+                  <MoreVert
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setOpenDropdown(!openDropdown)}
+                  />
+                  <Dropdown
+                    open={openDropdown}
+                    onClose={() => setOpenDropdown(false)}
+                    items={items}
+                  />
+                </div>
+                <ConfirmModal
+                  open={confirmOpen}
+                  title="Delete post"
+                  description="Are you sure you want to delete this post? This action cannot be undone."
+                  confirmText="Delete"
+                  cancelText="Cancel"
+                  onCancel={() => setConfirmOpen(false)}
+                  onConfirm={handleDeletePost}
+                />
+              </>
+            )}
           </div>
         </div>
         <div className={styles.postCenter}>

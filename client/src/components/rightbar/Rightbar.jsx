@@ -218,13 +218,13 @@ const Rightbar = ({ user }) => {
           )}
         </div>
         <h4 className={styles.rightbarTitle}>User friends</h4>
-        {friends.map((friend) => (
-          <Link
-            to={`/profile/${friend.username}`}
-            key={friend._id}
-            style={{ textDecoration: "none" }}
-          >
-            <div className={styles.rightbarFollowings}>
+        <div className={styles.rightbarFollowings}>
+          {friends.map((friend) => (
+            <Link
+              to={`/profile/${friend.username}`}
+              key={friend._id}
+              style={{ textDecoration: "none" }}
+            >
               <div className={styles.rightbarFollowing}>
                 <img
                   className={styles.rightbarFollowingImg}
@@ -239,9 +239,9 @@ const Rightbar = ({ user }) => {
                   {friend.username}
                 </span>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
       </>
     );
   };

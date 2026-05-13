@@ -23,6 +23,11 @@ const Feed = ({ username }) => {
     const token = getToLocalStorage("user")?.token;
     const config = requestConfig("GET", null, token);
     try {
+      // console.log(
+      //   username
+      //     ? `Fetching posts for profile: ${username}`
+      //     : `Fetching timeline posts for user ID: ${user._id}`
+      // );
       const res = username
         ? await fetch(`/api/posts/profile/${username}`, config)
         : await fetch(`/api/posts/timeline/${user._id}`, config);

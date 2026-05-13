@@ -123,7 +123,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
         stream.end(req.files.profilePicture[0].buffer);
       });
@@ -153,7 +153,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
         stream.end(req.files.coverPicture[0].buffer);
       });
@@ -167,7 +167,7 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
       { $set: updates },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     ).select("-password");
 
     res.status(200).json(updatedUser);
@@ -245,7 +245,9 @@ const getUserByName = async (req, res) => {
     const { userName } = req.params;
 
     //Check if user exists
-    const user = await User.findOne({ username: userName }).select("-password");
+    const user = await User.findOne({
+      username: userName.toLowerCase(),
+    }).select("-password");
 
     if (!user) {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
@@ -277,7 +279,7 @@ const getFriendsById = async (req, res) => {
     const friends = await Promise.all(
       user.followings.map((friendId) => {
         return User.findById(friendId).select("_id username profilePicture");
-      }),
+      })
     );
     res.status(200).json(friends);
   } catch (error) {
@@ -340,7 +342,7 @@ const userUnFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você não segue este usuário!"] });
     }
     currentUser.followings = currentUser.followings.filter(
-      (id) => id.toString() !== userId,
+      (id) => id.toString() !== userId
     );
     await currentUser.save();
     res.status(200).json({ message: "Usuário deixado de seguir com sucesso!" });

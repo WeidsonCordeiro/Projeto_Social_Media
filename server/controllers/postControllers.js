@@ -290,14 +290,20 @@ const getAllPostsByUserId = async (req, res) => {
 const getAllPostsByUserName = async (req, res) => {
   try {
     const currentUser = await User.findOne({ username: req.params.userName });
-
+    console.log("Current User:", currentUser);
     if (!currentUser) {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
     }
 
-    const userPosts = await Post.find({ userId: currentUser._id }).sort({
-      createdAt: -1,
-    });
+    const userPosts = await Post.find({
+      userId: {
+        $in: [new mongoose.Types.ObjectId(currentUser._id)],
+      },
+    })
+      .populate("userId", "username profilePicture")
+      .sort({
+        createdAt: -1,
+      });
 
     return res.status(200).json(userPosts);
   } catch (error) {

@@ -33,7 +33,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     const user = {
-      username,
+      username: username.toLowerCase(),
       email,
       password,
       confirmPassword,
