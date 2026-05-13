@@ -1,11 +1,11 @@
 //Hooks
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { logout } from "../../context/AuthActions";
 
-//Utils
-import { requestConfig, getToLocalStorage } from "../../utils/config";
+//Components
+import Dropdown from "../dropdown/Dropdown";
 
 //Css
 import styles from "./Topbar.module.css";
@@ -13,11 +13,37 @@ import styles from "./Topbar.module.css";
 //Icons assets
 import noAvatar from "../../assets/person/noAvatar.webp";
 
-//Icons
-import { Person, Chat, Notifications, Search } from "@mui/icons-material";
+//Icons Material UI
+import {
+  Person,
+  Chat,
+  Notifications,
+  Search,
+  Logout,
+} from "@mui/icons-material";
 
 const Topbar = () => {
-  const { user } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const navigate = useNavigate();
+
+  const items = [
+    {
+      label: "Profile",
+      icon: <Person fontSize="small" />,
+      onClick: () => {
+        navigate(`/profile/${user.username}`);
+      },
+    },
+    {
+      label: "Sair",
+      icon: <Logout fontSize="small" />,
+      danger: true,
+      onClick: () => {
+        dispatch(logout());
+      },
+    },
+  ];
 
   return (
     <div className={styles.topbarContainer}>
@@ -58,13 +84,19 @@ const Topbar = () => {
             <span className={styles.topbarIconBadge}>1</span>
           </div>
         </div>
-        <Link to={`/profile/${user.username}`} className={styles.linkStyle}>
+        <div style={{ position: "relative" }}>
           <img
             className={styles.topbarImg}
             src={user.profilePicture?.url ? user.profilePicture.url : noAvatar}
             alt=""
+            onClick={() => setOpenDropdown(!openDropdown)}
           />
-        </Link>
+          <Dropdown
+            open={openDropdown}
+            onClose={() => setOpenDropdown(false)}
+            items={items}
+          />
+        </div>
       </div>
     </div>
   );

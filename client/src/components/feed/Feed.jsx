@@ -54,7 +54,7 @@ const Feed = ({ username }) => {
           <Share onPostCreated={loadPosts} />
         )}
         {posts.map((p) => (
-          <Post key={p._id} post={p} />
+          <Post key={p._id} post={p} onPostCreated={loadPosts} />
         ))}
       </div>
     </div>

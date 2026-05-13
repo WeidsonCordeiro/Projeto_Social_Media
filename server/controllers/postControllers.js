@@ -23,7 +23,7 @@ const setPost = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
 
         stream.end(req.file.buffer);
@@ -97,7 +97,7 @@ const updatePost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { $set: { description, img } },
-      { new: true }, // Return the updated document
+      { new: true } // Return the updated document
     );
 
     res.status(200).json(updatedPost);
@@ -112,9 +112,8 @@ const updatePost = async (req, res) => {
 //Delete Post
 const deletePost = async (req, res) => {
   try {
-    // Validate request body
-    const { userId } = req.body;
     const { id } = req.params;
+    const userId = req.user._id;
 
     // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -128,11 +127,11 @@ const deletePost = async (req, res) => {
       return res.status(404).json({ errors: ["Post não encontrado!"] });
     }
 
-    // Check if user is authorized to delete the post
-    if (postExists.userId !== userId) {
-      return res
-        .status(403)
-        .json({ errors: ["Você não tem permissão para remover este Post!"] });
+    //Check if user is authorized to delete the post
+    if (!postExists.userId.equals(userId)) {
+      return res.status(403).json({
+        errors: ["Você não tem permissão para remover este Post!"],
+      });
     }
 
     // Delete the post
@@ -218,7 +217,7 @@ const commentPost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { $push: { comments: { userId, comment } } },
-      { new: true },
+      { new: true }
     );
 
     res

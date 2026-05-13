@@ -6,14 +6,13 @@ import Rightbar from "../../components/Rightbar/Rightbar";
 import EditCoverModal from "../../components/editCoverModal/EditCoverModal";
 import EditProfileModal from "../../components/editProfileModal/EditProfileModal";
 
-//Hooks
-import { useContext } from "react";
+// Hooks
+import { useContext, useEffect, useState, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+
+// Context
 import { AuthContext } from "../../context/AuthContext";
 import { updateUser } from "../../context/AuthActions";
-
-//Hooks
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
 
 //Css
 import styles from "./Profile.module.css";
@@ -29,65 +28,75 @@ import noCover from "../../assets/person/noCover.webp";
 import { requestConfig, getToLocalStorage } from "../../utils/config";
 
 const Profile = () => {
-  const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showEditCover, setShowEditCover] = useState(false);
   const { username } = useParams();
   const { user: userCredentials, dispatch } = useContext(AuthContext);
 
+  const [remoteUser, setRemoteUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showEditCover, setShowEditCover] = useState(false);
+
+  const isOwnProfile = userCredentials?.username === username;
+
+  const profileUser = useMemo(() => {
+    return isOwnProfile ? userCredentials : remoteUser;
+  }, [isOwnProfile, userCredentials, remoteUser]);
+
   useEffect(() => {
-    setLoading(true);
+    if (isOwnProfile) return;
+
     const fetchUser = async () => {
-      const token = getToLocalStorage("user")?.token;
-      const config = requestConfig("GET", null, token);
       try {
+        setLoading(true);
+        const token = getToLocalStorage("user")?.token;
+        const config = requestConfig("GET", null, token);
+
         const res = await fetch(
           `/api/users/username/${encodeURIComponent(username)}`,
-          config,
+          config
         );
-
         const result = await res.json();
 
         if (result.errors) {
           setError(result.errors);
-          setLoading(false);
+          setRemoteUser(null);
           return;
         }
 
-        setUser(result);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setLoading(false);
-        setError("Error fetching users!");
-        setUser({});
+        setRemoteUser(result);
+      } catch (err) {
+        console.error("Error fetching user:", err);
+        setError("Error fetching user");
+        setRemoteUser(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
+  }, [username, isOwnProfile]);
 
-    return () => {
-      setLoading(false);
-    };
-  }, [username]);
+  if (!profileUser) return null;
 
   return (
     <>
       <Topbar />
+
       <div className={styles.profileContainer}>
         <Sidebar />
+
         <div className={styles.profileRight}>
           <div className={styles.profileRightTop}>
             <div className={styles.profileCover}>
               <img
                 className={styles.profileCoverImg}
-                src={user.coverPicture?.url ? user.coverPicture.url : noCover}
-                alt=""
+                src={profileUser.coverPicture?.url || noCover}
+                alt="Cover"
               />
-              {userCredentials._id === user._id && (
+
+              {isOwnProfile && (
                 <span
                   title="Edit Cover Picture"
                   className={styles.editIcon}
@@ -96,136 +105,110 @@ const Profile = () => {
                   <EditIcon />
                 </span>
               )}
-              {showEditCover && (
+
+              {isOwnProfile && showEditCover && (
                 <EditCoverModal
-                  imageCover={
-                    user.coverPicture?.url ? user.coverPicture.url : noCover
-                  }
+                  imageCover={profileUser.coverPicture?.url || noCover}
                   onClose={() => setShowEditCover(false)}
                   onSave={async (data) => {
-                    if (Object.keys(data).length > 0) {
-                      const formData = new FormData();
+                    if (!Object.keys(data).length) return;
 
-                      if (data.coverPicture === null) {
-                        formData.append("removeCoverPicture", "true");
-                      } else if (data.coverPicture) {
-                        formData.append("coverPicture", data.coverPicture);
+                    const formData = new FormData();
+                    if (data.coverPicture === null) {
+                      formData.append("removeCoverPicture", "true");
+                    } else if (data.coverPicture) {
+                      formData.append("coverPicture", data.coverPicture);
+                    }
+
+                    try {
+                      setLoading(true);
+                      const token = getToLocalStorage("user")?.token;
+                      const config = requestConfig("PUT", formData, token);
+                      const res = await fetch("/api/users/", config);
+                      const result = await res.json();
+
+                      if (result.errors) {
+                        setError(result.errors);
+                        return;
                       }
 
-                      try {
-                        setLoading(true);
-                        const token = getToLocalStorage("user")?.token;
-                        const config = requestConfig("PUT", formData, token);
-
-                        const res = await fetch(`/api/users/`, config);
-
-                        const result = await res.json();
-
-                        if (result.errors) {
-                          setError(result.errors);
-                          setLoading(false);
-                          return;
-                        }
-
-                        setUser(result);
-                        setShowEditCover(false);
-                        dispatch(updateUser(result));
-                      } catch (error) {
-                        console.error("Error updating cover user:", error);
-                        setLoading(false);
-                        setError("Error updating cover user!");
-                        setUser({});
-                      } finally {
-                        setLoading(false);
-                        setShowEditCover(false);
-                      }
+                      dispatch(updateUser(result));
+                      setShowEditCover(false);
+                    } catch (err) {
+                      console.error("Error updating cover:", err);
+                    } finally {
+                      setLoading(false);
                     }
                   }}
                 />
               )}
-              {userCredentials._id === user._id ? (
+
+              {isOwnProfile ? (
                 <Link to="#">
                   <img
-                    title="Edit Profile Picture"
-                    onClick={() => setShowEditProfile(true)}
                     className={styles.profileUserImg}
-                    src={
-                      user.profilePicture?.url
-                        ? user.profilePicture.url
-                        : noAvatar
-                    }
-                    alt="Profile Picture"
+                    src={profileUser.profilePicture?.url || noAvatar}
+                    onClick={() => setShowEditProfile(true)}
+                    alt="Profile"
                   />
                 </Link>
               ) : (
                 <img
                   className={styles.profileUserImg}
-                  src={
-                    user.profilePicture?.url
-                      ? user.profilePicture.url
-                      : noAvatar
-                  }
-                  alt="Profile Picture"
+                  src={profileUser.profilePicture?.url || noAvatar}
+                  alt="Profile"
                 />
               )}
-              {showEditProfile && (
+
+              {isOwnProfile && showEditProfile && (
                 <EditProfileModal
-                  imagePicture={
-                    user.profilePicture?.url
-                      ? user.profilePicture.url
-                      : noAvatar
-                  }
+                  imagePicture={profileUser.profilePicture?.url || noAvatar}
                   onClose={() => setShowEditProfile(false)}
                   onSave={async (data) => {
-                    if (Object.keys(data).length > 0) {
-                      const formData = new FormData();
+                    if (!Object.keys(data).length) return;
 
-                      if (data.profilePicture === null) {
-                        formData.append("removeProfilePicture", "true");
-                      } else if (data.profilePicture) {
-                        formData.append("profilePicture", data.profilePicture);
+                    const formData = new FormData();
+                    if (data.profilePicture === null) {
+                      formData.append("removeProfilePicture", "true");
+                    } else if (data.profilePicture) {
+                      formData.append("profilePicture", data.profilePicture);
+                    }
+
+                    try {
+                      setLoading(true);
+                      const token = getToLocalStorage("user")?.token;
+                      const config = requestConfig("PUT", formData, token);
+                      const res = await fetch("/api/users/", config);
+                      const result = await res.json();
+
+                      if (result.errors) {
+                        setError(result.errors);
+                        return;
                       }
 
-                      try {
-                        setLoading(true);
-                        const token = getToLocalStorage("user")?.token;
-                        const config = requestConfig("PUT", formData, token);
-
-                        const res = await fetch(`/api/users/`, config);
-
-                        const result = await res.json();
-
-                        if (result.errors) {
-                          setError(result.errors);
-                          setLoading(false);
-                          return;
-                        }
-
-                        setUser(result);
-                        setShowEditProfile(false);
-                        dispatch(updateUser(result));
-                      } catch (error) {
-                        console.error("Error updating profile user:", error);
-                        setLoading(false);
-                        setError("Error updating profile user!");
-                        setUser({});
-                      } finally {
-                        setLoading(false);
-                        setShowEditProfile(false);
-                      }
+                      dispatch(updateUser(result));
+                      setShowEditProfile(false);
+                    } catch (err) {
+                      console.error("Error updating profile:", err);
+                    } finally {
+                      setLoading(false);
                     }
                   }}
                 />
               )}
             </div>
+
             <div className={styles.profileInfo}>
-              <h4 className={styles.profileInfoName}>{user.username}</h4>
-              <span className={styles.profileInfoDesc}>{user.description}</span>
+              <h4 className={styles.profileInfoName}>{profileUser.username}</h4>
+              <span className={styles.profileInfoDesc}>
+                {profileUser.description}
+              </span>
             </div>
           </div>
+
           <div className={styles.profileRightBottom}>
             <Feed username={username} />
-            <Rightbar user={user} />
+            <Rightbar user={profileUser} />
           </div>
         </div>
       </div>
