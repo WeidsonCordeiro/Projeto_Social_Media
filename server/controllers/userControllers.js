@@ -196,20 +196,19 @@ const login = async (req, res) => {
       return res.status(404).json({ errors: ["E-mail ou senha inválidos!"] });
     }
 
-    res.status(201).json({
-      _id: user._id,
-      username: user.username,
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.status(200).json({
+      ...userData,
       token: generateToken(user._id),
-      followers: user.followers,
-      followings: user.followings,
-      profilePicture: user.profilePicture,
-      coverPicture: user.coverPicture,
     });
   } catch (error) {
     console.error("Erro ao fazer login:", error);
-    return res
-      .status(500)
-      .json({ errors: ["Erro ao fazer login!"], errors: error.message });
+    return res.status(500).json({
+      errors: ["Erro ao fazer login!"],
+      message: error.message,
+    });
   }
 };
 
