@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import Dropdown from "../dropdown/Dropdown";
 import ConfirmModal from "../confirmModal/ConfirmModal";
+import EditPostInfoModal from "../editPostInfoModal/EditPostInfoModal";
 
 //Hooks
 import { useState, useEffect } from "react";
@@ -27,6 +28,7 @@ const Post = ({ post, onPostCreated }) => {
   const [likes, setLikes] = useState(post.likes || []);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [showEditPostInfo, setShowEditPostlInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useContext(AuthContext);
@@ -90,7 +92,7 @@ const Post = ({ post, onPostCreated }) => {
       label: "Editar post",
       icon: <Edit fontSize="small" />,
       onClick: () => {
-        console.log("editar");
+        setShowEditPostlInfo(true);
       },
     },
     {
@@ -145,6 +147,47 @@ const Post = ({ post, onPostCreated }) => {
                   onCancel={() => setConfirmOpen(false)}
                   onConfirm={handleDeletePost}
                 />
+                {showEditPostInfo && (
+                  <EditPostInfoModal
+                    imagePost={post.img}
+                    description={post.description}
+                    onClose={() => setShowEditPostlInfo(false)}
+                    onSave={async (data) => {
+                      try {
+                        setLoading(true);
+
+                        const token = getToLocalStorage("user")?.token;
+                        const config = requestConfig(
+                          "PUT",
+                          {
+                            userId: post.userId._id,
+                            description: data,
+                          },
+                          token
+                        );
+                        const res = await fetch(
+                          `/api/posts/${post._id}`,
+                          config
+                        );
+                        const result = await res.json();
+                        if (result.errors) {
+                          setError(result.errors);
+                          setLoading(false);
+                          return;
+                        }
+                        setShowEditPostlInfo(false);
+                        onPostCreated();
+                      } catch (error) {
+                        console.error("Error updating post info:", error);
+                        setLoading(false);
+                        setError("Error updating post info!");
+                      } finally {
+                        setLoading(false);
+                        setShowEditPostlInfo(false);
+                      }
+                    }}
+                  />
+                )}
               </>
             )}
           </div>

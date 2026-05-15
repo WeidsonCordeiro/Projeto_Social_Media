@@ -80,14 +80,20 @@ const updatePost = async (req, res) => {
     }
 
     // Check if user is authorized to update the post
-    if (postExists.userId !== userId) {
+    if (!postExists.userId.equals(userId)) {
       return res
         .status(403)
         .json({ errors: ["Você não tem permissão para atualizar este Post!"] });
     }
 
-    // Ensure there is something to update
-    if (!description && !img) {
+    const updates = {};
+
+    if (description !== undefined) updates.description = description;
+    if (img !== null) updates.img = img;
+
+    const hasUpdates = Object.keys(updates).length > 0;
+
+    if (!hasUpdates) {
       return res
         .status(400)
         .json({ errors: ["Nenhuma informação foi enviada para atualizar!"] });
@@ -96,8 +102,8 @@ const updatePost = async (req, res) => {
     // Update the post
     const updatedPost = await Post.findByIdAndUpdate(
       id,
-      { $set: { description, img } },
-      { new: true } // Return the updated document
+      { $set: updates },
+      { new: true, runValidators: true }
     );
 
     res.status(200).json(updatedPost);

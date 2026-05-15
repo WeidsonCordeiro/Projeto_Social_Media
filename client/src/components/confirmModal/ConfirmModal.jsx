@@ -7,15 +7,17 @@ export default function ConfirmModal({
   description,
   onConfirm,
   onCancel,
+  cancelText = "Cancel",
   confirmText = "Confirm",
-  cancelText = "Canccel",
 }) {
   if (!open) return null;
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.header}>
+          <h3 className={styles.title}>{title}</h3>
+        </div>
 
         <p className={styles.description}>{description}</p>
 

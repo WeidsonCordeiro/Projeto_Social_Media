@@ -15,15 +15,15 @@ import styles from "./Share.module.css";
 //Icons assets
 import noAvatar from "../../assets/person/noAvatar.webp";
 
-//Icons
+//Icons Material UI
 import {
   PermMedia,
   Label,
   Room,
   EmojiEmotions,
   Description,
-  Cancel,
 } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Share = ({ onPostCreated }) => {
   const [loading, setLoading] = useState(false);
@@ -126,10 +126,12 @@ const Share = ({ onPostCreated }) => {
               src={URL.createObjectURL(file)}
               alt="Preview"
             />
-            <Cancel
-              className={styles.shareCancelImg}
+            <button
+              className={styles.closeButton}
               onClick={() => setFile(null)}
-            />
+            >
+              <CloseIcon fontSize="small" />
+            </button>
           </div>
         )}
         <form className={styles.shareBottom} onSubmit={handleSubmit} noValidate>
@@ -161,7 +163,11 @@ const Share = ({ onPostCreated }) => {
               <span className={styles.shareOptionText}>Feelings</span>
             </div>
           </div>
-          <button type="submit" className={styles.shareButton}>
+          <button
+            type="submit"
+            className={styles.shareButton}
+            disabled={!file ? true : false}
+          >
             Share
           </button>
         </form>
