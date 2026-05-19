@@ -9,14 +9,14 @@ import { AuthContext } from "../../context/AuthContext";
 import { follow, unfollow } from "../../context/AuthActions";
 import EditPersonalInfoModal from "../../components/editPersonalInfoModal/EditPersonalInfoModal";
 
-import { Add, FamilyRestroomTwoTone } from "@mui/icons-material";
-import { Remove } from "@mui/icons-material";
-
 //Css
 import styles from "./Rightbar.module.css";
 
 //Material UI
 import EditIcon from "@mui/icons-material/Edit";
+import { CircularProgress } from "@mui/material";
+import { Add, FamilyRestroomTwoTone } from "@mui/icons-material";
+import { Remove } from "@mui/icons-material";
 
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
@@ -141,6 +141,11 @@ const Rightbar = ({ user }) => {
   const ProfileRightbar = ({ user }) => {
     return (
       <>
+        {loading && (
+          <div className="loading">
+            <CircularProgress color="black" size={40} />
+          </div>
+        )}
         {user.username !== userCredentials.username && (
           <button className={styles.rightbarFollowButton} onClick={handleClick}>
             {followed ? (
@@ -190,6 +195,7 @@ const Rightbar = ({ user }) => {
               onSave={async (data) => {
                 try {
                   setLoading(true);
+                  setShowEditPersonalInfo(false);
                   const token = getToLocalStorage("user")?.token;
                   const config = requestConfig("PUT", data, token);
 
@@ -203,7 +209,6 @@ const Rightbar = ({ user }) => {
                     return;
                   }
 
-                  setShowEditPersonalInfo(false);
                   dispatch(updateUser(result));
                 } catch (error) {
                   console.error("Error updating personal info:", error);

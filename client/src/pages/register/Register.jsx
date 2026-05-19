@@ -71,6 +71,11 @@ const Register = () => {
 
   return (
     <div className={styles.loginContainer}>
+      {loading && (
+        <div className="loading">
+          <CircularProgress color="black" size={40} />
+        </div>
+      )}
       <div className={styles.loginWrapper}>
         <div className={styles.loginLeft}>
           <h3 className={styles.loginLogo}>Social Media</h3>
@@ -134,17 +139,16 @@ const Register = () => {
                 )}
               </span>
             </div>
-            <button
-              type="submit"
-              className={styles.loginButton}
-              disabled={loading}
-            >
-              {loading ? (
-                <CircularProgress color="white" size={20} />
-              ) : (
-                "Sign Up"
-              )}
-            </button>
+            {!loading && (
+              <button className={styles.loginButton} type="submit">
+                Sign Up
+              </button>
+            )}
+            {loading && (
+              <button className={styles.loginButton} type="submit" disabled>
+                wait...
+              </button>
+            )}
             <span className={styles.loginForgot}>Forgot Password?</span>
             <Link to="/login">
               <button type="button" className={styles.loginRegisterButton}>

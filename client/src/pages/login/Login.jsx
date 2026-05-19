@@ -39,6 +39,11 @@ const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
+      {isFetching && (
+        <div className="loading">
+          <CircularProgress color="black" size={40} />
+        </div>
+      )}
       <div className={styles.loginWrapper}>
         <div className={styles.loginLeft}>
           <h3 className={styles.loginLogo}>Social Media</h3>
@@ -73,17 +78,16 @@ const Login = () => {
                 {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
               </span>
             </div>
-            <button
-              type="submit"
-              className={styles.loginButton}
-              disabled={isFetching}
-            >
-              {isFetching ? (
-                <CircularProgress color="white" size={20} />
-              ) : (
-                "Log In"
-              )}
-            </button>
+            {!isFetching && (
+              <button className={styles.loginButton} type="submit">
+                Log In
+              </button>
+            )}
+            {isFetching && (
+              <button className={styles.loginButton} type="submit" disabled>
+                wait...
+              </button>
+            )}
             <span className={styles.loginForgot}>Forgot Password?</span>
             <Link to="/register">
               <button className={styles.loginRegisterButton}>

@@ -15,6 +15,7 @@ import styles from "./Post.module.css";
 
 //Icons Material UI
 import { Edit, MoreVert, Delete } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
 
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
@@ -64,6 +65,7 @@ const Post = ({ post, onPostCreated }) => {
 
   const handleDeletePost = async () => {
     setLoading(true);
+    setConfirmOpen(false);
     const token = getToLocalStorage("user")?.token;
     const config = requestConfig("DELETE", null, token);
     try {
@@ -78,7 +80,6 @@ const Post = ({ post, onPostCreated }) => {
       if (onPostCreated) {
         onPostCreated();
       }
-      setConfirmOpen(false);
     } catch (error) {
       console.error("Erro ao remover post:", error);
       setError("Erro ao remover post!");
@@ -107,6 +108,11 @@ const Post = ({ post, onPostCreated }) => {
 
   return (
     <div className={styles.postContainer}>
+      {loading && (
+        <div className="loading">
+          <CircularProgress color="black" size={40} />
+        </div>
+      )}
       <div className={styles.postWrapper}>
         <div className={styles.postTop}>
           <div className={styles.postTopLeft}>
@@ -155,7 +161,7 @@ const Post = ({ post, onPostCreated }) => {
                     onSave={async (data) => {
                       try {
                         setLoading(true);
-
+                        setShowEditPostlInfo(false);
                         const token = getToLocalStorage("user")?.token;
                         const config = requestConfig(
                           "PUT",
@@ -163,11 +169,11 @@ const Post = ({ post, onPostCreated }) => {
                             userId: post.userId._id,
                             description: data,
                           },
-                          token
+                          token,
                         );
                         const res = await fetch(
                           `/api/posts/${post._id}`,
-                          config
+                          config,
                         );
                         const result = await res.json();
                         if (result.errors) {
@@ -175,7 +181,6 @@ const Post = ({ post, onPostCreated }) => {
                           setLoading(false);
                           return;
                         }
-                        setShowEditPostlInfo(false);
                         onPostCreated();
                       } catch (error) {
                         console.error("Error updating post info:", error);

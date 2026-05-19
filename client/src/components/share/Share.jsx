@@ -24,6 +24,7 @@ import {
   Description,
 } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
+import { CircularProgress } from "@mui/material";
 
 const Share = ({ onPostCreated }) => {
   const [loading, setLoading] = useState(false);
@@ -99,6 +100,11 @@ const Share = ({ onPostCreated }) => {
 
   return (
     <div className={styles.shareContainer}>
+      {loading && (
+        <div className="loading">
+          <CircularProgress color="black" size={40} />
+        </div>
+      )}
       <div className={styles.shareWrapper}>
         <div className={styles.shareTop}>
           <Link to={`/profile/${user.username}`}>

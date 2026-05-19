@@ -62,14 +62,6 @@ const Topbar = () => {
         </div>
       </div>
       <div className={styles.topbarRight}>
-        <div className={styles.topbarLinks}>
-          <Link to="/" className={styles.linkStyle}>
-            <span className={styles.topbarLink}>Homepage</span>
-          </Link>
-          <Link to={`/profile/${user.username}`} className={styles.linkStyle}>
-            <span className={styles.topbarLink}>Timeline</span>
-          </Link>
-        </div>
         <div className={styles.topbarIcons}>
           <div className={styles.topbarIconItem}>
             <Person />

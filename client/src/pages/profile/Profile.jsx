@@ -19,6 +19,7 @@ import styles from "./Profile.module.css";
 
 //Material UI
 import EditIcon from "@mui/icons-material/Edit";
+import { CircularProgress } from "@mui/material";
 
 //Icons assets
 import noAvatar from "../../assets/person/noAvatar.webp";
@@ -34,7 +35,7 @@ const Profile = () => {
   const [remoteUser, setRemoteUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [refreshFeed, setRefreshFeed] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showEditCover, setShowEditCover] = useState(false);
 
@@ -55,7 +56,7 @@ const Profile = () => {
 
         const res = await fetch(
           `/api/users/username/${encodeURIComponent(username)}`,
-          config
+          config,
         );
         const result = await res.json();
 
@@ -88,6 +89,11 @@ const Profile = () => {
         <Sidebar />
 
         <div className={styles.profileRight}>
+          {loading && (
+            <div className="loading">
+              <CircularProgress color="black" size={40} />
+            </div>
+          )}
           <div className={styles.profileRightTop}>
             <div className={styles.profileCover}>
               <img
@@ -122,6 +128,7 @@ const Profile = () => {
 
                     try {
                       setLoading(true);
+                      setShowEditCover(false);
                       const token = getToLocalStorage("user")?.token;
                       const config = requestConfig("PUT", formData, token);
                       const res = await fetch("/api/users/", config);
@@ -133,7 +140,6 @@ const Profile = () => {
                       }
 
                       dispatch(updateUser(result));
-                      setShowEditCover(false);
                     } catch (err) {
                       console.error("Error updating cover:", err);
                     } finally {
@@ -176,6 +182,7 @@ const Profile = () => {
 
                     try {
                       setLoading(true);
+                      setShowEditProfile(false);
                       const token = getToLocalStorage("user")?.token;
                       const config = requestConfig("PUT", formData, token);
                       const res = await fetch("/api/users/", config);
@@ -187,7 +194,7 @@ const Profile = () => {
                       }
 
                       dispatch(updateUser(result));
-                      setShowEditProfile(false);
+                      setRefreshFeed((prev) => !prev);
                     } catch (err) {
                       console.error("Error updating profile:", err);
                     } finally {
@@ -207,7 +214,7 @@ const Profile = () => {
           </div>
 
           <div className={styles.profileRightBottom}>
-            <Feed username={username} />
+            <Feed username={profileUser.username} refreshFeed={refreshFeed} />
             <Rightbar user={profileUser} />
           </div>
         </div>

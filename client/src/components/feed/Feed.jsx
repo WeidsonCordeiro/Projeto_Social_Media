@@ -6,13 +6,16 @@ import Share from "../share/Share";
 //Hooks
 import { useState, useEffect, useContext } from "react";
 
+//Material UI
+import { CircularProgress } from "@mui/material";
+
 //Css
 import styles from "./Feed.module.css";
 
 //Utils
 import { requestConfig, getToLocalStorage } from "../../utils/config";
 
-const Feed = ({ username }) => {
+const Feed = ({ username, refreshFeed }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,7 +29,7 @@ const Feed = ({ username }) => {
       // console.log(
       //   username
       //     ? `Fetching posts for profile: ${username}`
-      //     : `Fetching timeline posts for user ID: ${user._id}`
+      //     : `Fetching timeline posts for user ID: ${user._id}`,
       // );
       const res = username
         ? await fetch(`/api/posts/profile/${username}`, config)
@@ -50,10 +53,15 @@ const Feed = ({ username }) => {
 
   useEffect(() => {
     loadPosts();
-  }, [username, user._id]);
+  }, [username, user._id, refreshFeed]);
 
   return (
     <div className={styles.feedContainer}>
+      {loading && (
+        <div className="loading">
+          <CircularProgress color="black" size={40} />
+        </div>
+      )}
       <div className={styles.feedWrapper}>
         {(!username || username === user.username) && (
           <Share onPostCreated={loadPosts} />
