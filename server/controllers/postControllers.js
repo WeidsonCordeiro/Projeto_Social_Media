@@ -3,6 +3,12 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
 
+const populateUser = (query) => {
+  return query.populate("userId", "username profilePicture").sort({
+    createdAt: -1,
+  });
+};
+
 //Register Post
 const setPost = async (req, res) => {
   try {
@@ -23,7 +29,7 @@ const setPost = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
 
         stream.end(req.file.buffer);
@@ -103,7 +109,7 @@ const updatePost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { $set: updates },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     res.status(200).json(updatedPost);
@@ -223,7 +229,7 @@ const commentPost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { $push: { comments: { userId, comment } } },
-      { new: true }
+      { new: true },
     );
 
     res
@@ -274,13 +280,13 @@ const getAllPostsByUserId = async (req, res) => {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
     }
 
-    const timelinePosts = await Post.find({
-      userId: {
-        $in: [currentUserId._id, ...currentUserId.followings],
-      },
-    })
-      .populate("userId", "username profilePicture")
-      .sort({ createdAt: -1 });
+    const timelinePosts = await populateUser(
+      Post.find({
+        userId: {
+          $in: [currentUserId._id, ...currentUserId.followings],
+        },
+      }),
+    );
 
     return res.status(200).json(timelinePosts);
   } catch (error) {
@@ -301,15 +307,13 @@ const getAllPostsByUserName = async (req, res) => {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
     }
 
-    const userPosts = await Post.find({
-      userId: {
-        $in: [new mongoose.Types.ObjectId(currentUser._id)],
-      },
-    })
-      .populate("userId", "username profilePicture")
-      .sort({
-        createdAt: -1,
-      });
+    const userPosts = await populateUser(
+      Post.find({
+        userId: {
+          $in: [new mongoose.Types.ObjectId(currentUser._id)],
+        },
+      }),
+    );
 
     return res.status(200).json(userPosts);
   } catch (error) {

@@ -86,7 +86,7 @@ const Profile = () => {
       <Topbar />
 
       <div className={styles.profileContainer}>
-        <Sidebar />
+        <Sidebar user={profileUser} />
 
         <div className={styles.profileRight}>
           {loading && (

@@ -33,14 +33,18 @@ const UserSchema = new mongoose.Schema(
         default: "",
       },
     },
-    followers: {
-      type: Array,
-      default: [],
-    },
-    followings: {
-      type: Array,
-      default: [],
-    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    followings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     description: {
       type: String,
     },
@@ -58,7 +62,7 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true },
   {
     collection: "users",
-  }
+  },
 );
 
 const User = mongoose.model("User", UserSchema);

@@ -26,7 +26,7 @@ import { getRelationshipLabel } from "../../utils/getRelationshipLabel";
 import noAvatar from "../../assets/person/noAvatar.webp";
 
 const Rightbar = ({ user }) => {
-  const [friends, setFriends] = useState([]);
+  const friends = user?.followings || [];
   const [followed, setFollowed] = useState(false);
   const [showEditPersonalInfo, setShowEditPersonalInfo] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,73 +36,38 @@ const Rightbar = ({ user }) => {
   useEffect(() => {
     if (!userCredentials?.followings || !user?._id) return;
 
-    setFollowed(userCredentials.followings.includes(user._id));
+    setFollowed(
+      userCredentials.followings.some(
+        (following) => following._id === user._id,
+      ),
+    );
   }, [userCredentials, user?._id]);
-
-  useEffect(() => {
-    if (!user?._id) return;
-
-    const fetchFriends = async () => {
-      const config = requestConfig("GET", null, null);
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/users/friends/${user._id}`, config);
-        const result = await res.json();
-        if (result.errors) {
-          setError(result.errors);
-          return;
-        }
-        setFriends(result);
-      } catch (error) {
-        console.error("Error fetching friends:", error);
-        setFriends([]);
-        setError("Error fetching friends!");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFriends();
-  }, [user]);
 
   const handleClick = async () => {
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig("PUT", { userId: userCredentials._id }, token);
+    const config = requestConfig("PUT", {}, token);
 
     try {
       setLoading(true);
+
       let res;
-      let result;
-      console.log("Followed state before click:", followed);
+
       if (followed) {
         res = await fetch(`/api/users/unfollows/${user._id}`, config);
-
-        if (!res.ok) {
-          setError("Error unfollowing user");
-          return;
-        }
-        result = await res.json();
-        if (result.errors) {
-          setError(result.errors);
-          return;
-        }
-        dispatch(unfollow(user._id));
       } else {
         res = await fetch(`/api/users/follows/${user._id}`, config);
-        if (!res.ok) {
-          setError("Error following user");
-          return;
-        }
-        result = await res.json();
-        if (result.errors) {
-          setError(result.errors);
-          return;
-        }
-        dispatch(follow(user._id));
       }
+
+      const result = await res.json();
+
+      if (result.errors) {
+        setError(result.errors);
+        return;
+      }
+
+      dispatch(updateUser(result));
     } catch (error) {
       console.error("Error fetching follows:", error);
-      setFollowed(false);
       setError("Error fetching follows!");
     } finally {
       setLoading(false);

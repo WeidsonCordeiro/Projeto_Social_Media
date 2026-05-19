@@ -12,6 +12,13 @@ const generateToken = (id) => {
   });
 };
 
+const populateUser = (query) => {
+  return query
+    .populate("followings", "username profilePicture")
+    .populate("followers", "username profilePicture")
+    .select("-password");
+};
+
 //Register User
 const setUser = async (req, res) => {
   try {
@@ -75,7 +82,7 @@ const updateUser = async (req, res) => {
     const removeCoverPicture = req.body.removeCoverPicture === "true";
     const removeProfilePicture = req.body.removeProfilePicture === "true";
 
-    const user = await User.findById(reqUser._id).select("-password");
+    const user = await populateUser(User.findById(reqUser._id));
 
     if (!user) {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
@@ -123,7 +130,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
         stream.end(req.files.profilePicture[0].buffer);
       });
@@ -153,7 +160,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
         stream.end(req.files.coverPicture[0].buffer);
       });
@@ -164,11 +171,13 @@ const updateUser = async (req, res) => {
       };
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      user._id,
-      { $set: updates },
-      { new: true, runValidators: true }
-    ).select("-password");
+    const updatedUser = await populateUser(
+      User.findByIdAndUpdate(
+        user._id,
+        { $set: updates },
+        { new: true, runValidators: true },
+      ),
+    );
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -183,7 +192,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     //Check if user exists
-    const user = await User.findOne({ email });
+    const user = await populateUser(User.findOne({ email }));
 
     if (!user) {
       return res.status(404).json({ errors: ["E-mail ou senha inválidos!"] });
@@ -222,7 +231,7 @@ const getUserById = async (req, res) => {
       return res.status(422).json({ errors: ["Id Usuário inválido!"] });
     }
 
-    const user = await User.findById(id).select("-password");
+    const user = await populateUser(User.findById(id));
 
     if (!user) {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
@@ -246,7 +255,10 @@ const getUserByName = async (req, res) => {
     //Check if user exists
     const user = await User.findOne({
       username: userName.toLowerCase(),
-    }).select("-password");
+    })
+      .populate("followings", "username profilePicture")
+      .populate("followers", "username profilePicture")
+      .select("-password");
 
     if (!user) {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
@@ -278,7 +290,7 @@ const getFriendsById = async (req, res) => {
     const friends = await Promise.all(
       user.followings.map((friendId) => {
         return User.findById(friendId).select("_id username profilePicture");
-      })
+      }),
     );
     res.status(200).json(friends);
   } catch (error) {
@@ -309,8 +321,14 @@ const userFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você já segue este usuário!"] });
     }
     currentUser.followings.push(userId);
+    userToFollow.followers.push(currentUser._id);
+
     await currentUser.save();
-    res.status(200).json({ message: "Usuário seguido com sucesso!" });
+    await userToFollow.save();
+
+    const updatedUser = await populateUser(User.findById(currentUser._id));
+
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Erro ao seguir usuário:", error);
     return res
@@ -341,10 +359,19 @@ const userUnFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você não segue este usuário!"] });
     }
     currentUser.followings = currentUser.followings.filter(
-      (id) => id.toString() !== userId
+      (id) => id.toString() !== userId,
     );
+
+    userToUnFollow.followers = userToUnFollow.followers.filter(
+      (id) => id.toString() !== currentUser._id.toString(),
+    );
+
     await currentUser.save();
-    res.status(200).json({ message: "Usuário deixado de seguir com sucesso!" });
+    await userToUnFollow.save();
+
+    const updatedUser = await populateUser(User.findById(currentUser._id));
+
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Erro ao deixar de seguir usuário:", error);
     return res.status(500).json({
