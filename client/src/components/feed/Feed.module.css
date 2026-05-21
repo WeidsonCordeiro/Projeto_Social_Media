@@ -5,3 +5,36 @@
 .feedWrapper {
   padding: 20px;
 }
+
+.emptyFeed {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 300px;
+  padding: 40px 20px;
+  border-radius: 12px;
+  background-color: white;
+  background-color: #8080803d;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+}
+
+.username {
+  text-transform: capitalize;
+}
+
+.emptyFeed .username,
+h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.emptyFeed span {
+  font-size: 15px;
+  color: #777;
+  text-align: center;
+}

@@ -27,11 +27,14 @@ import heartWebp from "../../assets/icons/2.coracao.webp";
 
 const Post = ({ post, onPostCreated }) => {
   const [likes, setLikes] = useState(post.likes || []);
+  const [comments, setComments] = useState(post.comments || []);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [showEditPostInfo, setShowEditPostlInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState("");
   const { user } = useContext(AuthContext);
   const isOwnProfile = post.userId._id === user._id;
 
@@ -83,6 +86,38 @@ const Post = ({ post, onPostCreated }) => {
     } catch (error) {
       console.error("Erro ao remover post:", error);
       setError("Erro ao remover post!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    setLoading(true);
+    const token = getToLocalStorage("user")?.token;
+    const config = requestConfig(
+      "PUT",
+      { userId: user._id, comments: commentText },
+      token,
+    );
+    try {
+      const res = await fetch(`/api/posts/comment/${post._id}`, config);
+      const result = await res.json();
+
+      if (result.errors) {
+        setError(result.errors);
+        return;
+      }
+
+      setCommentText("");
+      if (result.updatedPost.comments) {
+        setComments(result.updatedPost.comments);
+      }
+    } catch (error) {
+      console.error("Error ao comment:", error);
+      setError("Erro ao comment!");
     } finally {
       setLoading(false);
     }
@@ -223,9 +258,73 @@ const Post = ({ post, onPostCreated }) => {
           <div className={styles.postBottomRight}>
             <span
               className={styles.postCommentText}
-            >{`${post.comments.length} comment(s)`}</span>
+              onClick={() => setShowComments(!showComments)}
+            >
+              {`${comments.length} comment(s)`}
+            </span>
           </div>
         </div>
+        {showComments && (
+          <form
+            className={styles.commentsSection}
+            onSubmit={handleCommentSubmit}
+          >
+            <div className={styles.commentsList}>
+              {comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div key={comment._id} className={styles.commentItem}>
+                    <Link to={`/profile/${comment.userId.username}`}>
+                      <img
+                        className={styles.commentProfileImg}
+                        src={
+                          comment.userId.profilePicture?.url
+                            ? comment.userId.profilePicture.url
+                            : noAvatar
+                        }
+                        alt=""
+                      />
+                    </Link>
+
+                    <div className={styles.commentContent}>
+                      <span className={styles.commentUsername}>
+                        {comment.userId.username}
+                      </span>
+
+                      <span className={styles.commentText}>{comment.text}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.emptyComments}>No comments yet</div>
+              )}
+            </div>
+
+            <div className={styles.commentInputContainer}>
+              <img
+                className={styles.commentProfileImg}
+                src={
+                  user.profilePicture?.url ? user.profilePicture.url : noAvatar
+                }
+                alt=""
+              />
+
+              <input
+                type="text"
+                placeholder="Write a comment..."
+                onChange={(e) => setCommentText(e.target.value)}
+                value={commentText}
+                className={styles.commentInput}
+              />
+
+              <button
+                className={styles.commentButton}
+                disabled={!commentText.trim()}
+              >
+                Post
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

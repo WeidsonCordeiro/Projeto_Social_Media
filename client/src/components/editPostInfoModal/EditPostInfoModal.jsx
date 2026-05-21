@@ -4,6 +4,9 @@ import { useState } from "react";
 //Icons Material UI
 import CloseIcon from "@mui/icons-material/Close";
 
+//Icons assets
+import noCover from "../../assets/person/noCover.webp";
+
 //Css
 import styles from "./EditPostInfoModal.module.css";
 
@@ -14,7 +17,7 @@ export default function EditPostInfoModal({
   onSave,
 }) {
   const [descriptionInfo, setDescriptionInfo] = useState(description);
-  const [preview, setPreview] = useState(imagePost);
+  const [preview, setPreview] = useState(imagePost || noCover);
 
   const hasChanged = description !== descriptionInfo;
 

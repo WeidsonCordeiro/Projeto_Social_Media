@@ -6,7 +6,7 @@ import { updateUser } from "../../context/AuthActions";
 //Components
 import Online from "../online/Online";
 import { AuthContext } from "../../context/AuthContext";
-import { follow, unfollow } from "../../context/AuthActions";
+// import { follow, unfollow } from "../../context/AuthActions";
 import EditPersonalInfoModal from "../../components/editPersonalInfoModal/EditPersonalInfoModal";
 
 //Css

@@ -22,11 +22,11 @@ export const updateUser = (user) => ({
   payload: user,
 });
 
-export const follow = (user) => ({
-  type: "FOLLOW",
-  payload: user,
-});
-export const unfollow = (user) => ({
-  type: "UNFOLLOW",
-  payload: user,
-});
+// export const follow = (user) => ({
+//   type: "FOLLOW",
+//   payload: user,
+// });
+// export const unfollow = (user) => ({
+//   type: "UNFOLLOW",
+//   payload: user,
+// });

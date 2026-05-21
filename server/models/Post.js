@@ -11,21 +11,47 @@ const PostSchema = new mongoose.Schema(
       type: String,
       max: 500,
       required: true,
+      trim: true,
     },
     img: {
       type: String,
     },
-    likes: {
-      type: Array,
-      default: [],
-    },
-    comments: {
-      type: Array,
-      default: [],
-    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    comments: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+
+        text: {
+          type: String,
+          required: true,
+          trim: true,
+          maxlength: 300,
+        },
+
+        likes: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
-  { timestamps: true },
   {
+    timestamps: true,
     collection: "posts",
   },
 );

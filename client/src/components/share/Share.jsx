@@ -172,7 +172,7 @@ const Share = ({ onPostCreated }) => {
           <button
             type="submit"
             className={styles.shareButton}
-            disabled={!file ? true : false}
+            disabled={!file && !description ? true : false}
           >
             Share
           </button>

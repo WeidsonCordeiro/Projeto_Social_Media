@@ -4,9 +4,12 @@ const Post = require("../models/Post");
 const mongoose = require("mongoose");
 
 const populateUser = (query) => {
-  return query.populate("userId", "username profilePicture").sort({
-    createdAt: -1,
-  });
+  return query
+    .populate("userId", "username profilePicture")
+    .populate("comments.userId", "username profilePicture")
+    .sort({
+      createdAt: -1,
+    });
 };
 
 //Register Post
@@ -65,59 +68,59 @@ const setPost = async (req, res) => {
   }
 };
 
-//Update Post
 const updatePost = async (req, res) => {
   try {
-    // Validate request body
     const { userId, description } = req.body;
-    const img = req.file ? req.file.filename : null;
     const { id } = req.params;
 
-    // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["ID do Post inválido!"] });
+      return res.status(422).json({
+        errors: ["ID do Post inválido!"],
+      });
     }
 
-    // Check if post exists
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post não encontrado!"] });
+      return res.status(404).json({
+        errors: ["Post não encontrado!"],
+      });
     }
 
-    // Check if user is authorized to update the post
     if (!postExists.userId.equals(userId)) {
-      return res
-        .status(403)
-        .json({ errors: ["Você não tem permissão para atualizar este Post!"] });
+      return res.status(403).json({
+        errors: ["Você não tem permissão para atualizar este Post!"],
+      });
     }
 
     const updates = {};
 
-    if (description !== undefined) updates.description = description;
-    if (img !== null) updates.img = img;
-
-    const hasUpdates = Object.keys(updates).length > 0;
-
-    if (!hasUpdates) {
-      return res
-        .status(400)
-        .json({ errors: ["Nenhuma informação foi enviada para atualizar!"] });
+    if (description !== undefined) {
+      updates.description = description;
     }
 
-    // Update the post
-    const updatedPost = await Post.findByIdAndUpdate(
-      id,
-      { $set: updates },
-      { new: true, runValidators: true },
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        errors: ["Nenhuma informação foi enviada para atualizar!"],
+      });
+    }
+
+    const updatedPost = await populateUser(
+      Post.findByIdAndUpdate(
+        id,
+        { $set: updates },
+        { new: true, runValidators: true },
+      ),
     );
 
     res.status(200).json(updatedPost);
   } catch (error) {
     console.error("Erro ao atualizar Post:", error);
-    return res
-      .status(500)
-      .json({ errors: ["Erro ao atualizar Post!"], details: error.message });
+
+    return res.status(500).json({
+      errors: ["Erro ao atualizar Post!"],
+      details: error.message,
+    });
   }
 };
 
@@ -188,9 +191,11 @@ const likePost = async (req, res) => {
       ? { $pull: { likes: userId } } // Unlike
       : { $push: { likes: userId } }; // Like
 
-    const updatedPost = await Post.findByIdAndUpdate(id, updateOperation, {
-      new: true, // Return the updated document
-    });
+    const updatedPost = await populateUser(
+      Post.findByIdAndUpdate(id, updateOperation, {
+        new: true,
+      }),
+    );
 
     const message = postExists.likes.includes(userId)
       ? "Post descurtido com sucesso!"
@@ -210,7 +215,7 @@ const likePost = async (req, res) => {
 const commentPost = async (req, res) => {
   try {
     // Validate request body
-    const { userId, comment } = req.body;
+    const { userId, comments } = req.body;
     const { id } = req.params;
 
     // Check if post ID is valid
@@ -226,10 +231,19 @@ const commentPost = async (req, res) => {
     }
 
     // Add comment to the post
-    const updatedPost = await Post.findByIdAndUpdate(
-      id,
-      { $push: { comments: { userId, comment } } },
-      { new: true },
+    const updatedPost = await populateUser(
+      Post.findByIdAndUpdate(
+        id,
+        {
+          $push: {
+            comments: {
+              userId,
+              text: comments,
+            },
+          },
+        },
+        { new: true },
+      ),
     );
 
     res
@@ -255,7 +269,7 @@ const getPosts = async (req, res) => {
     }
 
     // Check if post exists
-    const postExists = await Post.findById(id);
+    const postExists = await populateUser(Post.findById(id));
 
     if (!postExists) {
       return res.status(404).json({ errors: ["Post não encontrado!"] });

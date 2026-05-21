@@ -66,9 +66,20 @@ const Feed = ({ username, refreshFeed }) => {
         {(!username || username === user.username) && (
           <Share onPostCreated={loadPosts} />
         )}
-        {posts.map((p) => (
-          <Post key={p._id} post={p} onPostCreated={loadPosts} />
-        ))}
+        {!loading && posts.length === 0 && (
+          <div className={styles.emptyFeed}>
+            <h3>
+              <span className={styles.username}>{username}</span> hasn't posted
+              yet
+            </h3>
+            <span>When new posts are shared, they will appear here.</span>
+          </div>
+        )}
+        {!loading &&
+          posts.length > 0 &&
+          posts.map((p) => (
+            <Post key={p._id} post={p} onPostCreated={loadPosts} />
+          ))}
       </div>
     </div>
   );

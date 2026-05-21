@@ -191,8 +191,10 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    //Check if user exists
-    const user = await populateUser(User.findOne({ email }));
+    //Check if user exists - don't remove password for authentication
+    const user = await User.findOne({ email })
+      .populate("followings", "username profilePicture")
+      .populate("followers", "username profilePicture");
 
     if (!user) {
       return res.status(404).json({ errors: ["E-mail ou senha inválidos!"] });
