@@ -1,18 +1,63 @@
 require("dotenv").config();
-
-const connectDB = require("./config/db");
-
 const express = require("express");
-const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
+const connectDB = require("./config/db");
 const cors = require("cors");
 const router = require("./routes/Router.js");
-
 const port = process.env.PORT || 5000;
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+//Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  },
+});
+
+let onlineUsers = [];
+
+const addUser = (userId, socketId) => {
+  const userExists = onlineUsers.some(
+    (user) => user.userId.toString() === userId.toString(),
+  );
+
+  if (!userExists) {
+    onlineUsers.push({ userId, socketId });
+  }
+};
+
+const removeUser = (socketId) => {
+  onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+};
+
+io.on("connection", (socket) => {
+  console.log("✅ User connected:", socket.id);
+
+  // usuário entrou
+  socket.on("addUser", (userId) => {
+    addUser(userId, socket.id);
+
+    io.emit("getUsers", onlineUsers);
+
+    console.log("ONLINE USERS:", onlineUsers);
+  });
+
+  // usuário saiu
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+
+    removeUser(socket.id);
+
+    io.emit("getUsers", onlineUsers);
+  });
+});
 
 //Routes
 app.use(router);
@@ -25,7 +70,8 @@ app.use((err, req, res, next) => {
 
 if (process.env.NODE_ENV !== "production") {
   connectDB();
-  app.listen(port, () => {
+
+  server.listen(port, () => {
     console.log(`🚀 Server run in http://localhost:${port}`);
   });
 }

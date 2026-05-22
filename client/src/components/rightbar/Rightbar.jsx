@@ -6,7 +6,7 @@ import { updateUser } from "../../context/AuthActions";
 //Components
 import Online from "../online/Online";
 import { AuthContext } from "../../context/AuthContext";
-// import { follow, unfollow } from "../../context/AuthActions";
+import { SocketContext } from "../../context/SocketContext";
 import EditPersonalInfoModal from "../../components/editPersonalInfoModal/EditPersonalInfoModal";
 
 //Css
@@ -26,12 +26,19 @@ import { getRelationshipLabel } from "../../utils/getRelationshipLabel";
 import noAvatar from "../../assets/person/noAvatar.webp";
 
 const Rightbar = ({ user }) => {
-  const friends = user?.followings || [];
+  const [friends, setFriends] = useState(user?.followings || []);
   const [followed, setFollowed] = useState(false);
   const [showEditPersonalInfo, setShowEditPersonalInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user: userCredentials, dispatch } = useContext(AuthContext);
+  const { onlineUsers } = useContext(SocketContext);
+
+  const onlineFriends = userCredentials.followings.filter((friend) =>
+    onlineUsers.some(
+      (onlineUser) => onlineUser.userId.toString() === friend._id.toString(),
+    ),
+  );
 
   useEffect(() => {
     if (!userCredentials?.followings || !user?._id) return;
@@ -95,8 +102,8 @@ const Rightbar = ({ user }) => {
         />
         <h4 className={styles.rightbarTitle}>Online Friends</h4>
         <ul className={styles.rightbarFriendList}>
-          {friends.map((u) => (
-            <Online key={u.id} users={u} />
+          {onlineFriends.map((u) => (
+            <Online key={u._id} users={u} />
           ))}
         </ul>
       </>

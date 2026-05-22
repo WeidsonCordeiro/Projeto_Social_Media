@@ -316,7 +316,7 @@ const getAllPostsByUserId = async (req, res) => {
 const getAllPostsByUserName = async (req, res) => {
   try {
     const currentUser = await User.findOne({ username: req.params.userName });
-    console.log("Current User:", currentUser);
+
     if (!currentUser) {
       return res.status(404).json({ errors: ["Usuário não encontrado!"] });
     }

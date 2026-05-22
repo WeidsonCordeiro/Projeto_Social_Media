@@ -344,8 +344,6 @@ const userUnFollows = async (req, res) => {
   try {
     const { userId } = req.params;
     const reqUser = req.user;
-    console.log("User ID to unfollow:", userId);
-    console.log("User ID to unfollow:", reqUser);
 
     if (reqUser._id.toString() === userId) {
       return res

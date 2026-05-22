@@ -7,12 +7,11 @@ import {
   useLocation,
 } from "react-router-dom";
 
-//Components
+//Hooks
 import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
 
-//Components
-// import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
+//Context
+import { AuthContext } from "./context/AuthContext";
 
 //Css
 import "./App.css";
