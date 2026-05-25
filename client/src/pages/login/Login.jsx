@@ -1,9 +1,17 @@
 //Hooks
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Form, Link } from "react-router-dom";
 import { useRef, useContext } from "react";
-import { loginCall } from "../../apiCalls";
 import { AuthContext } from "../../context/AuthContext";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+} from "../../context/AuthActions";
+
+//Utils
+import { requestConfig } from "../../utils/config";
 
 //Material UI
 import { CircularProgress } from "@mui/material";
@@ -17,9 +25,10 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
   const { user, isFetching, error, dispatch } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const userCredentials = {
@@ -27,7 +36,38 @@ const Login = () => {
       password,
     };
 
-    loginCall(userCredentials, dispatch);
+    dispatch(loginStart());
+    const config = requestConfig("POST", userCredentials, null);
+    try {
+      const res = await fetch(`/api/users/login`, config);
+      const data = await res.json();
+
+      if (data.errors || !res.ok) {
+        dispatch(loginFailure(data.errors));
+        console.log("Login error response:", data.errors);
+        const errorsObj = {};
+
+        data.errors.forEach((err) => {
+          if (err.toLowerCase().includes("e-mail")) {
+            errorsObj.email = err;
+          }
+
+          if (err.toLowerCase().includes("senha")) {
+            errorsObj.password = err;
+          }
+        });
+        console.log("Login erros:", errorsObj);
+        setValidationErrors(errorsObj);
+
+        return;
+      }
+
+      setValidationErrors({});
+      dispatch(loginSuccess(data));
+    } catch (error) {
+      dispatch(loginFailure(error.message));
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -60,6 +100,11 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {validationErrors.email && (
+              <div className={styles.errormsg}>
+                <p>{validationErrors.email}</p>
+              </div>
+            )}
             <div className={styles.inputWrapper}>
               <input
                 className={styles.loginInput}
@@ -78,6 +123,11 @@ const Login = () => {
                 {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
               </span>
             </div>
+            {validationErrors.password && (
+              <div className={styles.errormsg}>
+                <p>{validationErrors.password}</p>
+              </div>
+            )}
             {!isFetching && (
               <button className={styles.loginButton} type="submit">
                 Log In

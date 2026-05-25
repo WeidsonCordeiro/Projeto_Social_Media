@@ -56,7 +56,7 @@ const Profile = () => {
 
         const res = await fetch(
           `/api/users/username/${encodeURIComponent(username)}`,
-          config,
+          config
         );
         const result = await res.json();
 

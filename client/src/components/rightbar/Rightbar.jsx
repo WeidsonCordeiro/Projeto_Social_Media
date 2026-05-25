@@ -36,17 +36,15 @@ const Rightbar = ({ user }) => {
 
   const onlineFriends = userCredentials.followings.filter((friend) =>
     onlineUsers.some(
-      (onlineUser) => onlineUser.userId.toString() === friend._id.toString(),
-    ),
+      (onlineUser) => onlineUser.userId.toString() === friend._id.toString()
+    )
   );
 
   useEffect(() => {
     if (!userCredentials?.followings || !user?._id) return;
 
     setFollowed(
-      userCredentials.followings.some(
-        (following) => following._id === user._id,
-      ),
+      userCredentials.followings.some((following) => following._id === user._id)
     );
   }, [userCredentials, user?._id]);
 
