@@ -4,12 +4,10 @@ const router = express.Router();
 //Controller
 const {
   setUser,
-  getCurrentUser,
   updateUser,
   login,
   getUserById,
   getUserByName,
-  getFriendsById,
   userFollows,
   userUnFollows,
 } = require("../controllers/userControllers");
@@ -35,19 +33,17 @@ router.put(
   ]),
   userUpdateValidation(),
   validate,
-  updateUser,
+  updateUser
 );
 router.post(
   "/register",
   userCreateValidation(),
   validate,
   dbMiddleware,
-  setUser,
+  setUser
 );
 router.post("/login", loginValidation(), validate, dbMiddleware, login);
-// router.get("/profile", authGuard, getCurrentUser);
 router.get("/username/:userName", authGuard, getUserByName);
-// router.get("/friends/:userId", getFriendsById);
 router.put("/follows/:userId", authGuard, userFollows);
 router.put("/unfollows/:userId", authGuard, userUnFollows);
 router.get("/:id", authGuard, getUserById);

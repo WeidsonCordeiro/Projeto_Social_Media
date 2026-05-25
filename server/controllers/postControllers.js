@@ -32,7 +32,7 @@ const setPost = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
 
         stream.end(req.file.buffer);
@@ -51,7 +51,7 @@ const setPost = async (req, res) => {
 
     //If Photo is created successfully
     if (!newPost) {
-      return res.status(422).json({ erros: ["Erro ao criar a Post!"] });
+      return res.status(422).json({ errors: ["Erro ao criar a Post!"] });
     }
 
     const savedPost = await newPost.save();
@@ -109,8 +109,8 @@ const updatePost = async (req, res) => {
       Post.findByIdAndUpdate(
         id,
         { $set: updates },
-        { new: true, runValidators: true },
-      ),
+        { new: true, runValidators: true }
+      )
     );
 
     res.status(200).json(updatedPost);
@@ -194,7 +194,7 @@ const likePost = async (req, res) => {
     const updatedPost = await populateUser(
       Post.findByIdAndUpdate(id, updateOperation, {
         new: true,
-      }),
+      })
     );
 
     const message = postExists.likes.includes(userId)
@@ -242,8 +242,8 @@ const commentPost = async (req, res) => {
             },
           },
         },
-        { new: true },
-      ),
+        { new: true }
+      )
     );
 
     res
@@ -299,7 +299,7 @@ const getAllPostsByUserId = async (req, res) => {
         userId: {
           $in: [currentUserId._id, ...currentUserId.followings],
         },
-      }),
+      })
     );
 
     return res.status(200).json(timelinePosts);
@@ -326,7 +326,7 @@ const getAllPostsByUserName = async (req, res) => {
         userId: {
           $in: [new mongoose.Types.ObjectId(currentUser._id)],
         },
-      }),
+      })
     );
 
     return res.status(200).json(userPosts);

@@ -63,19 +63,6 @@ const setUser = async (req, res) => {
   }
 };
 
-//Get current logged in user
-const getCurrentUser = async (req, res) => {
-  try {
-    const { user } = req; //const user = req.user; //Destructuring user from req
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Erro ao buscar usuário:", error);
-    return res
-      .status(500)
-      .json({ errors: ["Erro ao buscar usuário!"], errors: error.message });
-  }
-};
-
 const updateUser = async (req, res) => {
   try {
     const reqUser = req.user;
@@ -130,7 +117,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
         stream.end(req.files.profilePicture[0].buffer);
       });
@@ -160,7 +147,7 @@ const updateUser = async (req, res) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          },
+          }
         );
         stream.end(req.files.coverPicture[0].buffer);
       });
@@ -175,8 +162,8 @@ const updateUser = async (req, res) => {
       User.findByIdAndUpdate(
         user._id,
         { $set: updates },
-        { new: true, runValidators: true },
-      ),
+        { new: true, runValidators: true }
+      )
     );
 
     res.status(200).json(updatedUser);
@@ -276,34 +263,6 @@ const getUserByName = async (req, res) => {
   }
 };
 
-//Get Friends by UserId
-const getFriendsById = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    //Check if user exists
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(422).json({ errors: ["Id Usuário inválido!"] });
-    }
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
-    }
-    const friends = await Promise.all(
-      user.followings.map((friendId) => {
-        return User.findById(friendId).select("_id username profilePicture");
-      }),
-    );
-    res.status(200).json(friends);
-  } catch (error) {
-    console.error("Erro ao buscar amigos por Id:", error);
-    return res.status(500).json({
-      errors: ["Erro ao buscar amigos por Id!"],
-      message: error.message,
-    });
-  }
-};
-
 //User Follows
 const userFollows = async (req, res) => {
   try {
@@ -359,11 +318,11 @@ const userUnFollows = async (req, res) => {
       return res.status(400).json({ errors: ["Você não segue este usuário!"] });
     }
     currentUser.followings = currentUser.followings.filter(
-      (id) => id.toString() !== userId,
+      (id) => id.toString() !== userId
     );
 
     userToUnFollow.followers = userToUnFollow.followers.filter(
-      (id) => id.toString() !== currentUser._id.toString(),
+      (id) => id.toString() !== currentUser._id.toString()
     );
 
     await currentUser.save();
@@ -383,12 +342,10 @@ const userUnFollows = async (req, res) => {
 
 module.exports = {
   setUser,
-  getCurrentUser,
   updateUser,
   login,
   getUserById,
   getUserByName,
-  getFriendsById,
   userFollows,
   userUnFollows,
 };

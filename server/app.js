@@ -25,7 +25,7 @@ let onlineUsers = [];
 
 const addUser = (userId, socketId) => {
   const userExists = onlineUsers.some(
-    (user) => user.userId.toString() === userId.toString(),
+    (user) => user.userId.toString() === userId.toString()
   );
 
   if (!userExists) {
@@ -68,9 +68,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ errors: [err.message] });
 });
 
-if (process.env.NODE_ENV !== "production") {
-  connectDB();
+// Connect to MongoDB and start the server
+connectDB();
 
+// Start the server only in development mode
+if (process.env.NODE_ENV !== "production") {
   server.listen(port, () => {
     console.log(`🚀 Server run in http://localhost:${port}`);
   });
