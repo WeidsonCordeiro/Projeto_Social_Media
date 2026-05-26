@@ -44,7 +44,7 @@ const Login = () => {
 
       if (data.errors || !res.ok) {
         dispatch(loginFailure(data.errors));
-        console.log("Login error response:", data.errors);
+
         const errorsObj = {};
 
         data.errors.forEach((err) => {
@@ -56,7 +56,7 @@ const Login = () => {
             errorsObj.password = err;
           }
         });
-        console.log("Login erros:", errorsObj);
+
         setValidationErrors(errorsObj);
 
         return;

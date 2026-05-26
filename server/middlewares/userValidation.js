@@ -4,35 +4,29 @@ const userCreateValidation = () => {
   return [
     body("username")
       .notEmpty()
-      .withMessage("O nome é obrigatório!")
-      .bail()
-      .isString()
-      .withMessage("O nome deve ser uma string!")
+      .withMessage("The name is required!")
       .bail()
       .isLength({ min: 3 })
-      .withMessage("O nome deve ter pelo menos 3 caracteres!"),
+      .withMessage("The name must have at least 3 characters!"),
     body("email")
       .notEmpty()
-      .withMessage("O e-mail é obrigatório!")
+      .withMessage("The Email is required!")
       .bail()
       .isEmail()
-      .withMessage("E-mail inválido!"),
+      .withMessage("Email invalid!"),
     body("password")
       .notEmpty()
-      .withMessage("A senha é obrigatória!")
-      .bail()
-      .isString()
-      .withMessage("A senha deve ser uma string!")
+      .withMessage("The password is required!")
       .bail()
       .isLength({ min: 6 })
-      .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+      .withMessage("The password must have at least 6 characters!"),
     body("confirmPassword")
       .isString()
-      .withMessage("A confirmação de senha é obrigatória!")
+      .withMessage("Password confirmation is required!")
       .bail()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error("As senhas não são iguais!");
+          throw new Error("The passwords are not the same!");
         }
         return true;
       }),
@@ -43,19 +37,16 @@ const loginValidation = () => {
   return [
     body("email")
       .notEmpty()
-      .withMessage("O e-mail é obrigatório!")
-      .bail()
-      .isString()
-      .withMessage("O e-mail deve ser uma string!")
+      .withMessage("The Email is required!")
       .bail()
       .isEmail()
-      .withMessage("E-mail inválido!"),
+      .withMessage("Email invalid!"),
     body("password")
       .notEmpty()
-      .withMessage("A senha é obrigatória!")
+      .withMessage("The password is required!")
       .bail()
       .isLength({ min: 6 })
-      .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+      .withMessage("The password must have at least 6 characters!"),
   ];
 };
 
@@ -63,42 +54,36 @@ const userUpdateValidation = () => {
   return [
     body("username")
       .optional()
-      .isString()
-      .withMessage("O nome deve ser uma string!")
-      .bail()
       .isLength({ min: 3 })
-      .withMessage("O nome deve ter pelo menos 3 caracteres!"),
+      .withMessage("The name must have at least 3 characters!"),
     body("password")
       .optional()
       .isLength({ min: 6 })
-      .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+      .withMessage("The password must have at least 6 characters!"),
     body("profilePicture").optional(),
     body("coverPicture").optional(),
     body("description")
       .optional()
-      .isString()
-      .withMessage("A descrição deve ser uma string!")
-      .bail()
       .isLength({ min: 6 })
-      .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+      .withMessage("The description must have at least 6 characters!"),
     body("city")
       .optional()
       .isString()
-      .withMessage("A cidade deve ser uma string!")
+      .withMessage("The city must be a string!")
       .bail()
       .isLength({ min: 6 })
-      .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+      .withMessage("The city must have at least 6 characters!"),
     body("from")
       .optional()
       .isString()
-      .withMessage("O local de origem deve ser uma string!")
+      .withMessage("The origin location must be a string!")
       .bail()
       .isLength({ min: 3 })
-      .withMessage("A senha deve ter pelo menos 3 caracteres!"),
+      .withMessage("The password must have at least 3 characters!"),
     body("relationship")
       .optional()
       .isNumeric()
-      .withMessage("O estado civil deve ser um numero!"),
+      .withMessage("Marital status should be a number!"),
   ];
 };
 

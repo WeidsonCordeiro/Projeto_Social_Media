@@ -13,7 +13,7 @@ const imageUpload = multer({
     if (mimetype && extname) {
       cb(null, true);
     } else {
-      cb(new Error("Envie apenas imagens válidas!"));
+      cb(new Error("Please submit only valid images!"));
     }
   },
 });

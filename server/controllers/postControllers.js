@@ -12,7 +12,7 @@ const populateUser = (query) => {
     });
 };
 
-//Register Post
+// Register Post
 const setPost = async (req, res) => {
   try {
     const { userId, description } = req.body;
@@ -22,7 +22,7 @@ const setPost = async (req, res) => {
     if (!userId || !description) {
       return res
         .status(400)
-        .json({ errors: ["Campos obrigatórios não foram preenchidos!"] });
+        .json({ errors: ["Required fields were not filled!"] });
     }
 
     if (req.file) {
@@ -49,25 +49,26 @@ const setPost = async (req, res) => {
       img: imageUrl,
     });
 
-    //If Photo is created successfully
+    // If Photo is created successfully
     if (!newPost) {
-      return res.status(422).json({ errors: ["Erro ao criar a Post!"] });
+      return res.status(422).json({ errors: ["Error creating the Post!"] });
     }
 
     const savedPost = await newPost.save();
 
     res.status(201).json({
-      message: "Post registado com sucesso",
+      message: "Post successfully registered",
       post: savedPost,
     });
   } catch (error) {
-    console.error("Erro ao registar Post:", error);
+    console.error("Error registering Post:", error);
     return res
       .status(500)
-      .json({ errors: ["Erro ao registar Post!"], details: error.message });
+      .json({ errors: ["Error registering Post!"], details: error.message });
   }
 };
 
+// Update Post
 const updatePost = async (req, res) => {
   try {
     const { userId, description } = req.body;
@@ -75,7 +76,7 @@ const updatePost = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(422).json({
-        errors: ["ID do Post inválido!"],
+        errors: ["Invalid Post ID!"],
       });
     }
 
@@ -83,13 +84,13 @@ const updatePost = async (req, res) => {
 
     if (!postExists) {
       return res.status(404).json({
-        errors: ["Post não encontrado!"],
+        errors: ["Post not found!"],
       });
     }
 
     if (!postExists.userId.equals(userId)) {
       return res.status(403).json({
-        errors: ["Você não tem permissão para atualizar este Post!"],
+        errors: ["You do not have permission to update this Post!"],
       });
     }
 
@@ -101,7 +102,7 @@ const updatePost = async (req, res) => {
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
-        errors: ["Nenhuma informação foi enviada para atualizar!"],
+        errors: ["No information was sent to update!"],
       });
     }
 
@@ -115,16 +116,16 @@ const updatePost = async (req, res) => {
 
     res.status(200).json(updatedPost);
   } catch (error) {
-    console.error("Erro ao atualizar Post:", error);
+    console.error("Error updating Post:", error);
 
     return res.status(500).json({
-      errors: ["Erro ao atualizar Post!"],
+      errors: ["Error updating Post!"],
       details: error.message,
     });
   }
 };
 
-//Delete Post
+// Delete Post
 const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -132,20 +133,20 @@ const deletePost = async (req, res) => {
 
     // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["ID do Post inválido!"] });
+      return res.status(422).json({ errors: ["Invalid Post ID!"] });
     }
 
     // Check if post exists
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post não encontrado!"] });
+      return res.status(404).json({ errors: ["Post not found!"] });
     }
 
-    //Check if user is authorized to delete the post
+    // Check if user is authorized to delete the post
     if (!postExists.userId.equals(userId)) {
       return res.status(403).json({
-        errors: ["Você não tem permissão para remover este Post!"],
+        errors: ["You do not have permission to remove this Post!"],
       });
     }
 
@@ -153,43 +154,39 @@ const deletePost = async (req, res) => {
     const deletedPost = await Post.findByIdAndDelete(id);
 
     if (!deletedPost) {
-      return res.status(500).json({ errors: ["Erro ao remover o Post!"] });
+      return res.status(500).json({ errors: ["Error removing the Post!"] });
     }
 
     res
       .status(200)
-      .json({ message: "Post removido com sucesso!", deletedPost });
+      .json({ message: "Post successfully removed!", deletedPost });
   } catch (error) {
-    console.error("Erro ao remover Post:", error);
+    console.error("Error removing Post:", error);
     return res
       .status(500)
-      .json({ errors: ["Erro ao remover Post!"], details: error.message });
+      .json({ errors: ["Error removing Post!"], details: error.message });
   }
 };
 
-//Like Post
+// Like Post
 const likePost = async (req, res) => {
   try {
-    // Validate request body
     const { userId } = req.body;
     const { id } = req.params;
 
-    // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["ID do Post inválido!"] });
+      return res.status(422).json({ errors: ["Invalid Post ID!"] });
     }
 
-    // Check if post exists
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post não encontrado!"] });
+      return res.status(404).json({ errors: ["Post not found!"] });
     }
 
-    // Toggle like/unlike
     const updateOperation = postExists.likes.includes(userId)
-      ? { $pull: { likes: userId } } // Unlike
-      : { $push: { likes: userId } }; // Like
+      ? { $pull: { likes: userId } }
+      : { $push: { likes: userId } };
 
     const updatedPost = await populateUser(
       Post.findByIdAndUpdate(id, updateOperation, {
@@ -198,39 +195,35 @@ const likePost = async (req, res) => {
     );
 
     const message = postExists.likes.includes(userId)
-      ? "Post descurtido com sucesso!"
-      : "Post curtido com sucesso!";
+      ? "Post successfully unliked!"
+      : "Post successfully liked!";
 
     res.status(200).json({ message, updatedPost });
   } catch (error) {
-    console.error("Erro ao curtir/descurtir Post:", error);
+    console.error("Error liking/unliking Post:", error);
     return res.status(500).json({
-      errors: ["Erro ao curtir/descurtir Post!"],
+      errors: ["Error liking/unliking Post!"],
       details: error.message,
     });
   }
 };
 
-//Comment Post
+// Comment Post
 const commentPost = async (req, res) => {
   try {
-    // Validate request body
     const { userId, comments } = req.body;
     const { id } = req.params;
 
-    // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["ID do Post inválido!"] });
+      return res.status(422).json({ errors: ["Invalid Post ID!"] });
     }
 
-    // Check if post exists
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post não encontrado!"] });
+      return res.status(404).json({ errors: ["Post not found!"] });
     }
 
-    // Add comment to the post
     const updatedPost = await populateUser(
       Post.findByIdAndUpdate(
         id,
@@ -248,50 +241,48 @@ const commentPost = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Comentário adicionado com sucesso!", updatedPost });
+      .json({ message: "Comment successfully added!", updatedPost });
   } catch (error) {
-    console.error("Erro ao comentar Post:", error);
+    console.error("Error commenting on Post:", error);
     return res.status(500).json({
-      errors: ["Erro ao comentar Post!"],
+      errors: ["Error commenting on Post!"],
       details: error.message,
     });
   }
 };
 
-//Get Post
+// Get Post
 const getPosts = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["ID do Post inválido!"] });
+      return res.status(422).json({ errors: ["Invalid Post ID!"] });
     }
 
-    // Check if post exists
     const postExists = await populateUser(Post.findById(id));
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post não encontrado!"] });
+      return res.status(404).json({ errors: ["Post not found!"] });
     }
 
     return res.status(200).json(postExists);
   } catch (error) {
-    console.error("Erro ao buscar Posts:", error);
+    console.error("Error fetching Posts:", error);
     return res.status(500).json({
-      errors: ["Erro ao buscar Posts!"],
+      errors: ["Error fetching Posts!"],
       details: error.message,
     });
   }
 };
 
-//Get Timeline Posts by UserId
+// Get Timeline Posts by UserId
 const getAllPostsByUserId = async (req, res) => {
   try {
     const currentUserId = await User.findById(req.params.userId);
 
     if (!currentUserId) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
 
     const timelinePosts = await populateUser(
@@ -304,21 +295,21 @@ const getAllPostsByUserId = async (req, res) => {
 
     return res.status(200).json(timelinePosts);
   } catch (error) {
-    console.error("Erro ao buscar timeline Posts by UserId:", error);
+    console.error("Error fetching timeline Posts by UserId:", error);
     return res.status(500).json({
-      errors: ["Erro ao buscar timeline Posts by UserId!"],
+      errors: ["Error fetching timeline Posts by UserId!"],
       details: error.message,
     });
   }
 };
 
-//Get Timeline Posts by UserName
+// Get Timeline Posts by UserName
 const getAllPostsByUserName = async (req, res) => {
   try {
     const currentUser = await User.findOne({ username: req.params.userName });
 
     if (!currentUser) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
 
     const userPosts = await populateUser(
@@ -331,9 +322,9 @@ const getAllPostsByUserName = async (req, res) => {
 
     return res.status(200).json(userPosts);
   } catch (error) {
-    console.error("Erro ao buscar timeline Posts by UserName:", error);
+    console.error("Error fetching timeline Posts by UserName:", error);
     return res.status(500).json({
-      errors: ["Erro ao buscar timeline Posts by UserName!"],
+      errors: ["Error fetching timeline Posts by UserName!"],
       details: error.message,
     });
   }

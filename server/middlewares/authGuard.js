@@ -8,7 +8,7 @@ const authGuard = async (req, res, next) => {
 
   //Check if header as a token
   if (!token) {
-    return res.status(401).json({ errors: ["Acesso negado!"] });
+    return res.status(401).json({ errors: ["Access denied!"] });
   }
 
   //Check if token is valid
@@ -17,7 +17,7 @@ const authGuard = async (req, res, next) => {
     req.user = await User.findById(verified.id).select("-password");
     next();
   } catch (error) {
-    return res.status(401).json({ errors: ["Token inválido!"] });
+    return res.status(401).json({ errors: ["Invalid token!"] });
   }
 };
 

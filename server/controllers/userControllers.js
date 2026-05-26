@@ -28,9 +28,7 @@ const setUser = async (req, res) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return res
-        .status(422)
-        .json({ errors: ["Por favor, utilize outro e-mail"] });
+      return res.status(422).json({ errors: ["Please use another email"] });
     }
 
     //Generate password hash
@@ -47,7 +45,7 @@ const setUser = async (req, res) => {
     if (!newUser) {
       return res
         .status(422)
-        .json({ errors: ["Houve um erro, por favor tente mais tarde."] });
+        .json({ errors: ["An error occurred, please try again later."] });
     }
 
     res.status(201).json({
@@ -56,10 +54,10 @@ const setUser = async (req, res) => {
       token: generateToken(newUser._id),
     });
   } catch (error) {
-    console.error("Erro ao registar User:", error);
+    console.error("Error registering user:", error);
     return res
       .status(500)
-      .json({ errors: ["Erro ao registar User!"], details: error.message });
+      .json({ errors: ["Error registering user!"], details: error.message });
   }
 };
 
@@ -72,7 +70,7 @@ const updateUser = async (req, res) => {
     const user = await populateUser(User.findById(reqUser._id));
 
     if (!user) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
 
     const { username, description, city, from, relationship } = req.body;
@@ -95,7 +93,7 @@ const updateUser = async (req, res) => {
     if (!hasUpdates) {
       return res
         .status(400)
-        .json({ errors: ["Nenhuma informação foi enviada para atualizar!"] });
+        .json({ errors: ["No information was sent to update!"] });
     }
 
     // =====================
@@ -168,8 +166,8 @@ const updateUser = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.error("Erro ao atualizar usuário:", error);
-    res.status(500).json({ errors: ["Erro ao atualizar usuário!"] });
+    console.error("Error updating user:", error);
+    res.status(500).json({ errors: ["Error updating user!"] });
   }
 };
 
@@ -184,14 +182,14 @@ const login = async (req, res) => {
       .populate("followers", "username profilePicture");
 
     if (!user) {
-      return res.status(404).json({ errors: ["E-mail ou senha inválidos!"] });
+      return res.status(404).json({ errors: ["Invalid email or password!"] });
     }
 
     //Check if password is correct
     const checkPassword = await bcrypt.compare(password, user.password);
 
     if (!checkPassword) {
-      return res.status(404).json({ errors: ["E-mail ou senha inválidos!"] });
+      return res.status(404).json({ errors: ["Invalid email or password!"] });
     }
 
     const userData = user.toObject();
@@ -202,9 +200,9 @@ const login = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    console.error("Erro ao fazer login:", error);
+    console.error("Error logging in:", error);
     return res.status(500).json({
-      errors: ["Erro ao fazer login!"],
+      errors: ["Error logging in!"],
       message: error.message,
     });
   }
@@ -217,20 +215,20 @@ const getUserById = async (req, res) => {
 
     //Check if user exists
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["Id Usuário inválido!"] });
+      return res.status(422).json({ errors: ["Invalid user ID!"] });
     }
 
     const user = await populateUser(User.findById(id));
 
     if (!user) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Erro ao buscar usuário por Id:", error);
+    console.error("Error fetching user by ID:", error);
     return res.status(500).json({
-      errors: ["Erro ao buscar usuário por Id!"],
+      errors: ["Error fetching user by ID!"],
       message: error.message,
     });
   }
@@ -250,14 +248,14 @@ const getUserByName = async (req, res) => {
       .select("-password");
 
     if (!user) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Erro ao buscar usuário por Nome:", error);
+    console.error("Error fetching user by name:", error);
     return res.status(500).json({
-      errors: ["Erro ao buscar usuário por Nome!"],
+      errors: ["Error fetching user by name!"],
       message: error.message,
     });
   }
@@ -269,17 +267,17 @@ const userFollows = async (req, res) => {
     const { userId } = req.params;
     const reqUser = req.user;
     if (reqUser._id.toString() === userId) {
-      return res
-        .status(400)
-        .json({ errors: ["Você não pode seguir você mesmo!"] });
+      return res.status(400).json({ errors: ["You can't follow yourself!"] });
     }
     const userToFollow = await User.findById(userId);
     const currentUser = await User.findById(reqUser._id);
     if (!userToFollow) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
     if (currentUser.followings.includes(userId)) {
-      return res.status(400).json({ errors: ["Você já segue este usuário!"] });
+      return res
+        .status(400)
+        .json({ errors: ["You are already following this user!"] });
     }
     currentUser.followings.push(userId);
     userToFollow.followers.push(currentUser._id);
@@ -291,10 +289,10 @@ const userFollows = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.error("Erro ao seguir usuário:", error);
+    console.error("Error following user:", error);
     return res
       .status(500)
-      .json({ errors: ["Erro ao seguir usuário!"], message: error.message });
+      .json({ errors: ["Error following user!"], message: error.message });
   }
 };
 
@@ -307,15 +305,15 @@ const userUnFollows = async (req, res) => {
     if (reqUser._id.toString() === userId) {
       return res
         .status(400)
-        .json({ errors: ["Você não pode deixar de seguir você mesmo!"] });
+        .json({ errors: ["You can't stop following yourself!"] });
     }
     const userToUnFollow = await User.findById(userId);
     const currentUser = await User.findById(reqUser._id);
     if (!userToUnFollow) {
-      return res.status(404).json({ errors: ["Usuário não encontrado!"] });
+      return res.status(404).json({ errors: ["User not found!"] });
     }
     if (!currentUser.followings.includes(userId)) {
-      return res.status(400).json({ errors: ["Você não segue este usuário!"] });
+      return res.status(400).json({ errors: ["You do not follow this user!"] });
     }
     currentUser.followings = currentUser.followings.filter(
       (id) => id.toString() !== userId
@@ -332,9 +330,9 @@ const userUnFollows = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.error("Erro ao deixar de seguir usuário:", error);
+    console.error("Error unfollowing user:", error);
     return res.status(500).json({
-      errors: ["Erro ao deixar de seguir usuário!"],
+      errors: ["Error unfollowing user!"],
       message: error.message,
     });
   }
