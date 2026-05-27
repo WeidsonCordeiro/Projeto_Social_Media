@@ -22,7 +22,7 @@ const setPost = async (req, res) => {
     if (!userId || !description) {
       return res
         .status(400)
-        .json({ errors: ["Required fields were not filled!"] });
+        .json({ error: ["Required fields were not filled!"] });
     }
 
     if (req.file) {
@@ -51,7 +51,7 @@ const setPost = async (req, res) => {
 
     // If Photo is created successfully
     if (!newPost) {
-      return res.status(422).json({ errors: ["Error creating the Post!"] });
+      return res.status(422).json({ error: ["Error creating the Post!"] });
     }
 
     const savedPost = await newPost.save();
@@ -64,7 +64,7 @@ const setPost = async (req, res) => {
     console.error("Error registering Post:", error);
     return res
       .status(500)
-      .json({ errors: ["Error registering Post!"], details: error.message });
+      .json({ error: ["Error registering Post!"], details: error.message });
   }
 };
 
@@ -76,7 +76,7 @@ const updatePost = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(422).json({
-        errors: ["Invalid Post ID!"],
+        error: ["Invalid Post ID!"],
       });
     }
 
@@ -84,13 +84,13 @@ const updatePost = async (req, res) => {
 
     if (!postExists) {
       return res.status(404).json({
-        errors: ["Post not found!"],
+        error: ["Post not found!"],
       });
     }
 
     if (!postExists.userId.equals(userId)) {
       return res.status(403).json({
-        errors: ["You do not have permission to update this Post!"],
+        error: ["You do not have permission to update this Post!"],
       });
     }
 
@@ -102,7 +102,7 @@ const updatePost = async (req, res) => {
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
-        errors: ["No information was sent to update!"],
+        error: ["No information was sent to update!"],
       });
     }
 
@@ -119,7 +119,7 @@ const updatePost = async (req, res) => {
     console.error("Error updating Post:", error);
 
     return res.status(500).json({
-      errors: ["Error updating Post!"],
+      error: ["Error updating Post!"],
       details: error.message,
     });
   }
@@ -133,20 +133,20 @@ const deletePost = async (req, res) => {
 
     // Check if post ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["Invalid Post ID!"] });
+      return res.status(422).json({ error: ["Invalid Post ID!"] });
     }
 
     // Check if post exists
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post not found!"] });
+      return res.status(404).json({ error: ["Post not found!"] });
     }
 
     // Check if user is authorized to delete the post
     if (!postExists.userId.equals(userId)) {
       return res.status(403).json({
-        errors: ["You do not have permission to remove this Post!"],
+        error: ["You do not have permission to remove this Post!"],
       });
     }
 
@@ -154,7 +154,7 @@ const deletePost = async (req, res) => {
     const deletedPost = await Post.findByIdAndDelete(id);
 
     if (!deletedPost) {
-      return res.status(500).json({ errors: ["Error removing the Post!"] });
+      return res.status(500).json({ error: ["Error removing the Post!"] });
     }
 
     res
@@ -164,7 +164,7 @@ const deletePost = async (req, res) => {
     console.error("Error removing Post:", error);
     return res
       .status(500)
-      .json({ errors: ["Error removing Post!"], details: error.message });
+      .json({ error: ["Error removing Post!"], details: error.message });
   }
 };
 
@@ -175,13 +175,13 @@ const likePost = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["Invalid Post ID!"] });
+      return res.status(422).json({ error: ["Invalid Post ID!"] });
     }
 
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post not found!"] });
+      return res.status(404).json({ error: ["Post not found!"] });
     }
 
     const updateOperation = postExists.likes.includes(userId)
@@ -202,7 +202,7 @@ const likePost = async (req, res) => {
   } catch (error) {
     console.error("Error liking/unliking Post:", error);
     return res.status(500).json({
-      errors: ["Error liking/unliking Post!"],
+      error: ["Error liking/unliking Post!"],
       details: error.message,
     });
   }
@@ -215,13 +215,13 @@ const commentPost = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["Invalid Post ID!"] });
+      return res.status(422).json({ error: ["Invalid Post ID!"] });
     }
 
     const postExists = await Post.findById(id);
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post not found!"] });
+      return res.status(404).json({ error: ["Post not found!"] });
     }
 
     const updatedPost = await populateUser(
@@ -245,7 +245,7 @@ const commentPost = async (req, res) => {
   } catch (error) {
     console.error("Error commenting on Post:", error);
     return res.status(500).json({
-      errors: ["Error commenting on Post!"],
+      error: ["Error commenting on Post!"],
       details: error.message,
     });
   }
@@ -257,20 +257,20 @@ const getPosts = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({ errors: ["Invalid Post ID!"] });
+      return res.status(422).json({ error: ["Invalid Post ID!"] });
     }
 
     const postExists = await populateUser(Post.findById(id));
 
     if (!postExists) {
-      return res.status(404).json({ errors: ["Post not found!"] });
+      return res.status(404).json({ error: ["Post not found!"] });
     }
 
     return res.status(200).json(postExists);
   } catch (error) {
     console.error("Error fetching Posts:", error);
     return res.status(500).json({
-      errors: ["Error fetching Posts!"],
+      error: ["Error fetching Posts!"],
       details: error.message,
     });
   }
@@ -282,7 +282,7 @@ const getAllPostsByUserId = async (req, res) => {
     const currentUserId = await User.findById(req.params.userId);
 
     if (!currentUserId) {
-      return res.status(404).json({ errors: ["User not found!"] });
+      return res.status(404).json({ error: ["User not found!"] });
     }
 
     const timelinePosts = await populateUser(
@@ -297,7 +297,7 @@ const getAllPostsByUserId = async (req, res) => {
   } catch (error) {
     console.error("Error fetching timeline Posts by UserId:", error);
     return res.status(500).json({
-      errors: ["Error fetching timeline Posts by UserId!"],
+      error: ["Error fetching timeline Posts by UserId!"],
       details: error.message,
     });
   }
@@ -309,7 +309,7 @@ const getAllPostsByUserName = async (req, res) => {
     const currentUser = await User.findOne({ username: req.params.userName });
 
     if (!currentUser) {
-      return res.status(404).json({ errors: ["User not found!"] });
+      return res.status(404).json({ error: ["User not found!"] });
     }
 
     const userPosts = await populateUser(
@@ -324,7 +324,7 @@ const getAllPostsByUserName = async (req, res) => {
   } catch (error) {
     console.error("Error fetching timeline Posts by UserName:", error);
     return res.status(500).json({
-      errors: ["Error fetching timeline Posts by UserName!"],
+      error: ["Error fetching timeline Posts by UserName!"],
       details: error.message,
     });
   }

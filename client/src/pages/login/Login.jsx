@@ -7,11 +7,13 @@ import {
   loginStart,
   loginSuccess,
   loginFailure,
-  logout,
+  stopLoading,
+  clearError,
 } from "../../context/AuthActions";
 
 //Utils
 import { requestConfig } from "../../utils/config";
+import { mapValidationErrors } from "../../utils/mapValidationErrors";
 
 //Material UI
 import { CircularProgress } from "@mui/material";
@@ -26,7 +28,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const { user, isFetching, error, dispatch } = useContext(AuthContext);
+  const { isFetching, error, dispatch } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,42 +42,34 @@ const Login = () => {
     const config = requestConfig("POST", userCredentials, null);
     try {
       const res = await fetch(`/api/users/login`, config);
-      const data = await res.json();
+      const result = await res.json();
 
-      if (data.errors || !res.ok) {
-        dispatch(loginFailure(data.errors));
+      if (result.errors) {
+        setValidationErrors(mapValidationErrors(result.errors));
+        dispatch(stopLoading());
+        return;
+      }
 
-        const errorsObj = {};
-
-        data.errors.forEach((err) => {
-          if (err.toLowerCase().includes("e-mail")) {
-            errorsObj.email = err;
-          }
-
-          if (err.toLowerCase().includes("senha")) {
-            errorsObj.password = err;
-          }
-        });
-
-        setValidationErrors(errorsObj);
-
+      if (result.error) {
+        setValidationErrors({});
+        dispatch(loginFailure(result.error));
         return;
       }
 
       setValidationErrors({});
-      dispatch(loginSuccess(data));
+      setEmail("");
+      setPassword("");
+      dispatch(loginSuccess(result));
     } catch (error) {
-      dispatch(loginFailure(error.message));
-      console.log(error);
+      dispatch(loginFailure(error.message || "Something went wrong!"));
     }
   };
 
   useEffect(() => {
-    if (user && !error) {
-      setEmail("");
-      setPassword("");
-    }
-  }, [user, error]);
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
 
   return (
     <div className={styles.loginContainer}>
@@ -110,7 +104,7 @@ const Login = () => {
                 className={styles.loginInput}
                 type={showPassword ? "text" : "password"}
                 value={password}
-                min={6}
+                minLength={6}
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -126,6 +120,11 @@ const Login = () => {
             {validationErrors.password && (
               <div className={styles.errormsg}>
                 <p>{validationErrors.password}</p>
+              </div>
+            )}
+            {error && Object.keys(validationErrors).length === 0 && (
+              <div className={styles.errormsg}>
+                <p>{error}</p>
               </div>
             )}
             {!isFetching && (

@@ -34,7 +34,7 @@
 }
 
 .loginBox {
-  height: 450px;
+  height: 550px;
   padding: 20px;
   background-color: white;
   border-radius: 10px;
@@ -113,4 +113,19 @@
 
 .active {
   color: #000;
+}
+
+.errormsg {
+  font-size: 12px;
+  line-height: 1.36;
+  letter-spacing: 0.1px;
+  text-align: left;
+  color: #d0011b;
+  padding: 0;
+}
+
+.errormsg p {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
 }

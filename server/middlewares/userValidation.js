@@ -4,7 +4,7 @@ const userCreateValidation = () => {
   return [
     body("username")
       .notEmpty()
-      .withMessage("The name is required!")
+      .withMessage("Username is required!")
       .bail()
       .isLength({ min: 3 })
       .withMessage("The name must have at least 3 characters!"),
@@ -21,8 +21,11 @@ const userCreateValidation = () => {
       .isLength({ min: 6 })
       .withMessage("The password must have at least 6 characters!"),
     body("confirmPassword")
-      .isString()
-      .withMessage("Password confirmation is required!")
+      .notEmpty()
+      .withMessage("Confirmation is required!")
+      .bail()
+      .isLength({ min: 6 })
+      .withMessage("The password must have at least 6 characters!")
       .bail()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
@@ -55,7 +58,7 @@ const userUpdateValidation = () => {
     body("username")
       .optional()
       .isLength({ min: 3 })
-      .withMessage("The name must have at least 3 characters!"),
+      .withMessage("Username must have at least 3 characters!"),
     body("password")
       .optional()
       .isLength({ min: 6 })

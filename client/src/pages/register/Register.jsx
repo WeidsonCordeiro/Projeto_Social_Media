@@ -8,6 +8,7 @@ import { loginSuccess } from "../../context/AuthActions";
 
 //Utils
 import { requestConfig } from "../../utils/config";
+import { mapValidationErrors } from "../../utils/mapValidationErrors";
 
 //Material UI
 import { CircularProgress } from "@mui/material";
@@ -26,12 +27,14 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     const user = {
       username: username.toLowerCase(),
       email,
@@ -45,24 +48,29 @@ const Register = () => {
       const result = await res.json();
 
       if (result.errors) {
-        setError(result.errors);
+        setValidationErrors(mapValidationErrors(result.errors));
         setLoading(false);
         return;
       }
 
-      //dispatch(loginSuccess(result));
+      if (result.error) {
+        setValidationErrors({});
+        setError(result.error);
+        return;
+      }
 
-      // Limpa campos
+      // Clear fields
       setUsername("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      setValidationErrors({});
 
-      // Redireciona para Login
+      // Redirects to Login
       navigate("/login");
     } catch (error) {
       console.error("Error registering user:", error);
-      setError("Erro ao registar. Tente novamente!");
+      setError("Error registering. Please try again.!");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -83,7 +91,7 @@ const Register = () => {
             Connect with friends and the world around you on Social Media.
           </span>
         </div>
-        <form className={styles.loginRight} onSubmit={handleSubmit}>
+        <form className={styles.loginRight} onSubmit={handleSubmit} noValidate>
           <div className={styles.loginBox}>
             <input
               placeholder="User Name"
@@ -92,6 +100,11 @@ const Register = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+            {validationErrors.username && (
+              <div className={styles.errormsg}>
+                <p>{validationErrors.username}</p>
+              </div>
+            )}
             <input
               placeholder="Email"
               type="email"
@@ -99,12 +112,17 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {validationErrors.email && (
+              <div className={styles.errormsg}>
+                <p>{validationErrors.email}</p>
+              </div>
+            )}
             <div className={styles.inputWrapper}>
               <input
                 className={styles.loginInput}
                 type={showPassword ? "text" : "password"}
                 value={password}
-                min={6}
+                minLength={6}
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -117,12 +135,17 @@ const Register = () => {
                 {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
               </span>
             </div>
+            {validationErrors.password && (
+              <div className={styles.errormsg}>
+                <p>{validationErrors.password}</p>
+              </div>
+            )}
             <div className={styles.inputWrapper}>
               <input
                 className={styles.loginInput}
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
-                min={6}
+                minLength={6}
                 placeholder="Password Again"
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -139,6 +162,16 @@ const Register = () => {
                 )}
               </span>
             </div>
+            {validationErrors.confirmPassword && (
+              <div className={styles.errormsg}>
+                <p>{validationErrors.confirmPassword}</p>
+              </div>
+            )}
+            {error && Object.keys(validationErrors).length === 0 && (
+              <div className={styles.errormsg}>
+                <p>{error}</p>
+              </div>
+            )}
             {!loading && (
               <button className={styles.loginButton} type="submit">
                 Sign Up
