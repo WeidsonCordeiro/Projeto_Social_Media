@@ -26,7 +26,6 @@ import { getRelationshipLabel } from "../../utils/getRelationshipLabel";
 import noAvatar from "../../assets/person/noAvatar.webp";
 
 const Rightbar = ({ user }) => {
-  const [friends, setFriends] = useState(user?.followings || []);
   const [followed, setFollowed] = useState(false);
   const [showEditPersonalInfo, setShowEditPersonalInfo] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -194,7 +193,7 @@ const Rightbar = ({ user }) => {
         </div>
         <h4 className={styles.rightbarTitle}>User friends</h4>
         <div className={styles.rightbarFollowings}>
-          {friends.map((friend) => (
+          {user.followings?.map((friend) => (
             <Link
               to={`/profile/${friend.username}`}
               key={friend._id}
