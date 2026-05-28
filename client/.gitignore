@@ -26,4 +26,8 @@ dist-ssr
 # environment variables files
 .env
 
+# testing
+coverage
+.vitest
+
 
