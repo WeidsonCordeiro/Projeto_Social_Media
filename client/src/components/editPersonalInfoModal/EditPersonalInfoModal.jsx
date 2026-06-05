@@ -80,6 +80,9 @@ export default function EditPersonalInfoModal({ user, onClose, onSave }) {
                   })
                 }
               />
+              <span className={styles.counter}>
+                {newUser.description?.length || 0}/500
+              </span>
             </div>
 
             <div className={styles.fieldGroup}>

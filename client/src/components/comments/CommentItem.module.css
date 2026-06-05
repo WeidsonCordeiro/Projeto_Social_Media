@@ -1,0 +1,25 @@
+.commentItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.commentProfileImg {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.commentUserName {
+  text-transform: capitalize;
+  font-size: 15px;
+  font-weight: 500;
+}

@@ -26,7 +26,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { CircularProgress } from "@mui/material";
 
-const Share = ({ onPostCreated }) => {
+const Share = ({ refreshPosts }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [description, setDescription] = useState("");
@@ -86,8 +86,8 @@ const Share = ({ onPostCreated }) => {
         setLocation("");
         setFeelings("");
 
-        if (onPostCreated) {
-          onPostCreated();
+        if (refreshPosts) {
+          refreshPosts();
         }
       }
     } catch (error) {

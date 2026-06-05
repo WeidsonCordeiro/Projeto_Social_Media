@@ -8,6 +8,8 @@ const {
   deletePost,
   likePost,
   commentPost,
+  deleteCommentPost,
+  updateCommentPost,
   getPosts,
   getAllPostsByUserId,
   getAllPostsByUserName,
@@ -45,5 +47,7 @@ router.put(
   validate,
   commentPost
 );
+router.delete("/:id/comments/:commentId", autGuard, deleteCommentPost);
+router.put("/:id/comments/:commentId", autGuard, updateCommentPost);
 
 module.exports = router;

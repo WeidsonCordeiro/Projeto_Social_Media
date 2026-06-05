@@ -1,0 +1,15 @@
+.commentsSection {
+  margin-top: 18px;
+  border-top: 1px solid #ececec;
+  padding-top: 18px;
+}
+
+.emptyComments {
+  text-align: center;
+  padding: 18px;
+  border: 1px dashed #d1d5db;
+  border-radius: 14px;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 20px;
+}

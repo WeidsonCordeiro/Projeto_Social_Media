@@ -64,7 +64,7 @@ const Feed = ({ username, refreshFeed }) => {
       )}
       <div className={styles.feedWrapper}>
         {(!username || username === user.username) && (
-          <Share onPostCreated={loadPosts} />
+          <Share refreshPosts={loadPosts} />
         )}
         {!loading && posts.length === 0 && (
           <div className={styles.emptyFeed}>
@@ -78,7 +78,7 @@ const Feed = ({ username, refreshFeed }) => {
         {!loading &&
           posts.length > 0 &&
           posts.map((p) => (
-            <Post key={p._id} post={p} onPostCreated={loadPosts} />
+            <Post key={p._id} post={p} refreshPosts={loadPosts} />
           ))}
       </div>
     </div>

@@ -251,6 +251,104 @@ const commentPost = async (req, res) => {
   }
 };
 
+const deleteCommentPost = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({ error: ["Invalid Post ID!"] });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(422).json({ error: ["Invalid Comment ID!"] });
+    }
+
+    const updatedPost = await populateUser(
+      Post.findByIdAndUpdate(
+        id,
+        {
+          $pull: {
+            comments: {
+              _id: commentId,
+              userId: req.user._id,
+            },
+          },
+        },
+        { new: true }
+      )
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ error: ["Post not found!"] });
+    }
+
+    res.status(200).json({
+      message: "Comment successfully removed!",
+      updatedPost,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: ["Error removing comment!"],
+      details: error.message,
+    });
+  }
+};
+
+const updateCommentPost = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+    const { text } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({ error: ["Invalid Post ID!"] });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(422).json({ error: ["Invalid Comment ID!"] });
+    }
+
+    if (!text || text.trim() === "") {
+      return res.status(422).json({ error: ["Comment text is required!"] });
+    }
+
+    const updatedPost = await populateUser(
+      Post.findOneAndUpdate(
+        {
+          _id: id,
+          comments: {
+            $elemMatch: {
+              _id: commentId,
+              userId: req.user._id,
+            },
+          },
+        },
+        {
+          $set: {
+            "comments.$.text": text,
+          },
+        },
+        { new: true }
+      )
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ error: ["Post or comment not found!"] });
+    }
+
+    res.status(200).json({
+      message: "Comment successfully updated!",
+      updatedPost,
+    });
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    res.status(500).json({
+      error: ["Error updating comment!"],
+      details: error.message,
+    });
+  }
+};
+
 // Get Post
 const getPosts = async (req, res) => {
   try {
@@ -336,6 +434,8 @@ module.exports = {
   deletePost,
   likePost,
   commentPost,
+  deleteCommentPost,
+  updateCommentPost,
   getPosts,
   getAllPostsByUserId,
   getAllPostsByUserName,

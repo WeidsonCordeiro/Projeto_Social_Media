@@ -1,0 +1,33 @@
+.postBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postBottomLeft {
+  display: flex;
+  align-items: center;
+}
+
+.likeIcon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.likeIconSmall {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* .postLikeCounter {
+  font-size: 15px;
+} */
+
+.postCommentText {
+  border-bottom: 1px dashed gray;
+  cursor: pointer;
+  font-size: 15px;
+}
