@@ -1,10 +1,13 @@
 import { useState } from "react";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../../utils/config";
+import { getToLocalStorage } from "../../../utils/config";
 
 //Icons assets
 import noAvatar from "../../assets/person/noAvatar.webp";
+
+//Services
+import { addPost } from "../../services/postService";
 
 //Css
 import styles from "./CommentForm.module.css";
@@ -20,18 +23,14 @@ const CommentForm = ({ post, currentUser, setComments }) => {
 
     setLoading(true);
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig(
-      "PUT",
-      {
-        userId: currentUser._id,
-        comments: commentText,
-      },
-      token
-    );
 
     try {
-      const res = await fetch(`/api/posts/comment/${post._id}`, config);
-      const result = await res.json();
+      const result = await addPost(
+        post._id,
+        currentUser._id,
+        commentText,
+        token
+      );
 
       if (result.updatedPost?.comments) {
         setComments(result.updatedPost.comments);

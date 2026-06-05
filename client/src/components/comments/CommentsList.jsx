@@ -1,5 +1,5 @@
 //React Hooks
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 //Components
 import CommentItem from "./CommentItem";
@@ -7,7 +7,10 @@ import ConfirmModal from "../../components/confirmModal/ConfirmModal";
 import EditCommentModal from "../editCommentModal/EditCommentModal";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../../utils/config";
+import { getToLocalStorage } from "../../../utils/config";
+
+//Services
+import { updateComment, deleteComment } from "../../services/postService";
 
 //Css
 import styles from "./CommentsList.module.css";
@@ -21,14 +24,9 @@ const CommentsList = ({ comments, currentUser, post, setComments }) => {
   const handleDeleteComment = async () => {
     setLoading(true);
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig("DELETE", null, token);
 
     try {
-      const res = await fetch(
-        `/api/posts/${post._id}/comments/${selectedComment._id}`,
-        config
-      );
-      const result = await res.json();
+      const result = await deleteComment(post._id, selectedComment._id, token);
 
       if (!result.errors) {
         setConfirmDelete(false);
@@ -47,14 +45,14 @@ const CommentsList = ({ comments, currentUser, post, setComments }) => {
   const handleUpdateComment = async (description) => {
     setLoading(true);
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig("PUT", { text: description }, token);
 
     try {
-      const res = await fetch(
-        `/api/posts/${post._id}/comments/${selectedComment._id}`,
-        config
+      const result = await updateComment(
+        post._id,
+        selectedComment._id,
+        description,
+        token
       );
-      const result = await res.json();
 
       if (!result.errors) {
         setShowEditModal(false);

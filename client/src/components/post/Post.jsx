@@ -14,7 +14,10 @@ import ConfirmModal from "../confirmModal/ConfirmModal";
 import EditPostInfoModal from "../editPostInfoModal/EditPostInfoModal";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../utils/config";
+import { getToLocalStorage } from "../../utils/config";
+
+//Services
+import { likePost, updatePost, deletePost } from "../../services/postService";
 
 //Css
 import styles from "./Post.module.css";
@@ -39,12 +42,9 @@ const Post = ({ post, refreshPosts }) => {
 
   const likeHandler = async () => {
     const token = getToLocalStorage("user")?.token;
-    const config = requestConfig("PUT", { userId: user._id }, token);
 
     try {
-      const res = await fetch(`/api/posts/likes/${post._id}`, config);
-
-      const result = await res.json();
+      const result = await likePost(post._id, user._id, token);
 
       if (result.updatedPost?.likes) {
         setLikes(result.updatedPost.likes);
@@ -55,20 +55,19 @@ const Post = ({ post, refreshPosts }) => {
   };
 
   const handleUpdatePost = async (description) => {
+    const token = getToLocalStorage("user")?.token;
+
     try {
       setLoading(true);
       setShowEditModal(false);
-      const token = getToLocalStorage("user")?.token;
-      const config = requestConfig(
-        "PUT",
-        {
-          userId: post.userId._id,
-          description,
-        },
+
+      const result = await updatePost(
+        post._id,
+        post.userId._id,
+        description,
         token
       );
-      const res = await fetch(`/api/posts/${post._id}`, config);
-      const result = await res.json();
+
       if (result.errors) {
         setLoading(false);
         return;
@@ -84,16 +83,13 @@ const Post = ({ post, refreshPosts }) => {
   };
 
   const handleDeletePost = async () => {
+    const token = getToLocalStorage("user")?.token;
+
     try {
       setLoading(true);
       setConfirmDelete(false);
 
-      const token = getToLocalStorage("user")?.token;
-      const config = requestConfig("DELETE", null, token);
-
-      const res = await fetch(`/api/posts/${post._id}`, config);
-
-      const result = await res.json();
+      const result = await deletePost(post._id, token);
 
       if (result.errors) {
         setLoading(false);
