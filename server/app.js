@@ -9,14 +9,20 @@ const port = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL_PRD,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //Socket.io
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL_PRD,
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -71,11 +77,10 @@ app.use((err, req, res, next) => {
 // Connect to MongoDB and start the server
 connectDB();
 
-// Start the server only in development mode
-if (process.env.NODE_ENV !== "production") {
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
   server.listen(port, () => {
-    console.log(`🚀 Server run in http://localhost:${port}`);
+    console.log(`🚀 Server running on port ${port}`);
   });
 }
-
-module.exports = app;

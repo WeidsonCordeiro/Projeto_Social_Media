@@ -32,7 +32,7 @@ export const SocketProvider = ({ children }) => {
     }
 
     // cria conexão socket
-    const socketInstance = io(import.meta.env.VITE_API_URL);
+    const socketInstance = io(import.meta.env.VITE_API_URL_PRD);
 
     setSocket(socketInstance);
 
