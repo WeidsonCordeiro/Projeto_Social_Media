@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
 });
 
 //Routes
-app.use(router);
+app.use("/api", router);
 
 //Middleware de Tratamento de Erros Global:
 app.use((err, req, res, next) => {

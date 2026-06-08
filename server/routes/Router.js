@@ -6,7 +6,8 @@ router.use("/api/users", require("./userRoutes"));
 router.use("/api/posts", require("./postRoutes"));
 
 // Test route under /api
-router.get("/api", (req, res) => {
+
+router.get("/", (req, res) => {
   res.send("API is working!");
 });
 
