@@ -29,6 +29,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const { isFetching, error, dispatch } = useContext(AuthContext);
+  const API_URL_PRD = import.meta.env.VITE_API_URL_PRD;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +42,7 @@ const Login = () => {
     dispatch(loginStart());
     const config = requestConfig("POST", userCredentials, null);
     try {
-      const res = await fetch(`/api/users/login`, config);
+      const res = await fetch(`${API_URL_PRD}/api/users/login`, config);
       const result = await res.json();
 
       if (result.errors) {
