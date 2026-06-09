@@ -26,6 +26,7 @@ O projeto foi desenvolvido com React (Vite) no frontend e Node.js + Express no b
 - 🔐 JWT (JSON Web Token) — Autenticação segura
 - ☁️ Cloudinary — Upload e armazenamento de imagens
 - 📦 Multer — Upload de arquivos
+- 🔌 Socket.IO — Comunicação em tempo real
 
 ## 📦 Funcionalidades
 
@@ -42,38 +43,47 @@ O projeto foi desenvolvido com React (Vite) no frontend e Node.js + Express no b
 - Curtir / descurtir / comentar posts
 - Editar posts
 - Excluir posts
-- Visualizar detalhes do postt
+- Visualizar detalhes do post
 
-3. 📊 **Dashboard do Usuário**
+3. 💬 **Comentários**
+
+- Criar comentários
+- Editar comentários (somente o autor)
+- Excluir comentários (autor ou dono do post)
+- Modal para gerenciar comentários
+
+4. 📊 **Dashboard do Usuário**
 
 - Visualizar dados do usuário
 - Listar posts do usuário
-- Editar perfil
+- Editar perfil (nome, descrição, foto de perfil e capa)
 
-4. ⚡ UX e Estado
+5. 🤝 **Amigos**
+
+- Lista de amigos online (Socket.IO)
+
+6. ⚡ **UX e Estado**
 
 - Atualização do feed em tempo real (Context Api)
 - Mensagens de sucesso/erro
 - Controle de loading
 
-5. 🔐Segurança
-   -Tokens JWT com expiração (1h)
-   -Logout automático no frontend ao expirar
-   -Validação de token no backend
-   -Proteção de rotas-
+7. 🔐 **Segurança**
+
+- Tokens JWT com expiração (1h)
+- Logout automático no frontend ao expirar
+- Validação de token no backend
+- Proteção de rotas
 
 ## 🚧 Funcionalidades em Desenvolvimento
 
 As seguintes funcionalidades ainda estão sendo implementadas:
 
-- 📱 Responsividade completa
-- ✏️ Edição de perfil
-- 📝 Editar e excluir posts
-- 💬 Modal de comentários
-- 💬 Conversas simultâneas (chat em tempo real)
-- 🔔 Notificações de novos posts de amigos
-- 🤝 Sistema de amizade (convites)
-- 🟢 Lista de amigos online
+- 🔍 **Busca de amigos em geral**
+- 📱 **Responsividade completa**
+- 💬 **Conversas simultâneas (chat em tempo real)**
+- 🔔 **Notificações de novos posts de amigos**
+- 🤝 **Sistema de amizade (convites)**
 
 ## 🛠️ Pré-requisitos
 
@@ -89,7 +99,7 @@ Antes de começar:
 ### 🤝 Como Contribuir
 
 1. Faça um fork deste repositório.
-2. Crie uma branch para sua feature (git checkout -b minha-feature).
-3. Commit suas alterações (git commit -m 'Adiciona minha feature').
-4. Faça o push para a branch (git push origin minha-feature).
+2. Crie uma branch para sua feature (`git checkout -b minha-feature`).
+3. Commit suas alterações (`git commit -m 'Adiciona minha feature'`).
+4. Faça o push para a branch (`git push origin minha-feature`).
 5. Abra um Pull Request.
