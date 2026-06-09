@@ -26,7 +26,7 @@ import noAvatar from "../../assets/person/noAvatar.webp";
 import noCover from "../../assets/person/noCover.webp";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../utils/config";
+import { requestConfig, getToLocalStorage, API_URL } from "../../utils/config";
 
 const Profile = () => {
   const { username } = useParams();
@@ -55,7 +55,7 @@ const Profile = () => {
         const config = requestConfig("GET", null, token);
 
         const res = await fetch(
-          `/api/users/username/${encodeURIComponent(username)}`,
+          `${API_URL}/api/users/username/${encodeURIComponent(username)}`,
           config
         );
         const result = await res.json();

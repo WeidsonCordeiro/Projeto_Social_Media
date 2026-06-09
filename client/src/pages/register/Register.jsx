@@ -7,7 +7,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { loginSuccess } from "../../context/AuthActions";
 
 //Utils
-import { requestConfig } from "../../utils/config";
+import { requestConfig, API_URL } from "../../utils/config";
 import { mapValidationErrors } from "../../utils/mapValidationErrors";
 
 //Material UI
@@ -44,7 +44,7 @@ const Register = () => {
 
     const config = requestConfig("POST", user, null);
     try {
-      const res = await fetch(`/api/users/register`, config);
+      const res = await fetch(`${API_URL}/api/users/register`, config);
       const result = await res.json();
 
       if (result.errors) {

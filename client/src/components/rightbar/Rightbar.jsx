@@ -19,7 +19,7 @@ import { Add, FamilyRestroomTwoTone } from "@mui/icons-material";
 import { Remove } from "@mui/icons-material";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../utils/config";
+import { requestConfig, getToLocalStorage, API_URL } from "../../utils/config";
 import { getRelationshipLabel } from "../../utils/getRelationshipLabel";
 
 //Icons assets
@@ -57,9 +57,9 @@ const Rightbar = ({ user }) => {
       let res;
 
       if (followed) {
-        res = await fetch(`/api/users/unfollows/${user._id}`, config);
+        res = await fetch(`${API_URL}/api/users/unfollows/${user._id}`, config);
       } else {
-        res = await fetch(`/api/users/follows/${user._id}`, config);
+        res = await fetch(`${API_URL}/api/users/follows/${user._id}`, config);
       }
 
       const result = await res.json();

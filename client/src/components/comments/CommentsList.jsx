@@ -7,7 +7,7 @@ import ConfirmModal from "../../components/confirmModal/ConfirmModal";
 import EditCommentModal from "../editCommentModal/EditCommentModal";
 
 //Utils
-import { getToLocalStorage } from "../../../utils/config";
+import { getToLocalStorage } from "../../utils/config";
 
 //Services
 import { updateComment, deleteComment } from "../../services/postService";

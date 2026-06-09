@@ -1,13 +1,13 @@
+//Hooks
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
 //Components
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../utils/config";
-
-//Hooks
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { requestConfig, getToLocalStorage, API_URL } from "../../utils/config";
 
 //Css
 import styles from "./Share.module.css";
@@ -71,7 +71,7 @@ const Share = ({ refreshPosts }) => {
     const token = getToLocalStorage("user")?.token;
     const config = requestConfig("POST", payload, token);
     try {
-      const res = await fetch(`/api/posts/register`, config);
+      const res = await fetch(`${API_URL}/api/posts/register`, config);
       const result = await res.json();
 
       if (result.errors) {

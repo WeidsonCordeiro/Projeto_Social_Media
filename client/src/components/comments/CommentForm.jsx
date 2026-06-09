@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 //Utils
-import { getToLocalStorage } from "../../../utils/config";
+import { getToLocalStorage } from "../../utils/config";
 
 //Icons assets
 import noAvatar from "../../assets/person/noAvatar.webp";

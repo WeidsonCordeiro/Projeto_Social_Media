@@ -3,6 +3,9 @@
 // Hooks
 import { createContext, useEffect, useState, useContext } from "react";
 
+//Utils
+import { API_URL } from "../utils/config";
+
 // Context
 import { AuthContext } from "./AuthContext";
 
@@ -15,7 +18,6 @@ export const SocketProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const API_URL_PRD = import.meta.env.VITE_API_URL_PRD;
 
   useEffect(() => {
     // se não tiver usuário logado
@@ -32,7 +34,7 @@ export const SocketProvider = ({ children }) => {
     }
 
     // cria conexão socket
-    const socketInstance = io(API_URL_PRD);
+    const socketInstance = io(API_URL);
 
     setSocket(socketInstance);
 

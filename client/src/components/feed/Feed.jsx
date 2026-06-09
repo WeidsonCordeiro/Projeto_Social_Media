@@ -13,7 +13,7 @@ import { CircularProgress } from "@mui/material";
 import styles from "./Feed.module.css";
 
 //Utils
-import { requestConfig, getToLocalStorage } from "../../utils/config";
+import { requestConfig, getToLocalStorage, API_URL } from "../../utils/config";
 
 const Feed = ({ username, refreshFeed }) => {
   const [posts, setPosts] = useState([]);
@@ -32,8 +32,8 @@ const Feed = ({ username, refreshFeed }) => {
       //     : `Fetching timeline posts for user ID: ${user._id}`,
       // );
       const res = username
-        ? await fetch(`/api/posts/profile/${username}`, config)
-        : await fetch(`/api/posts/timeline/${user._id}`, config);
+        ? await fetch(`${API_URL}/api/posts/profile/${username}`, config)
+        : await fetch(`${API_URL}/api/posts/timeline/${user._id}`, config);
       const result = await res.json();
 
       if (result.errors) {

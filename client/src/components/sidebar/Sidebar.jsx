@@ -6,7 +6,6 @@ import { useContext } from "react";
 
 // Context
 import { AuthContext } from "../../context/AuthContext";
-import { updateUser } from "../../context/AuthActions";
 
 //Css
 import styles from "./Sidebar.module.css";
