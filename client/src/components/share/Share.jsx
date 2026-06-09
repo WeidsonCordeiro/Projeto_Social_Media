@@ -153,15 +153,15 @@ const Share = ({ refreshPosts }) => {
                 onChange={(e) => setFile(e.target.files[0])}
               />
             </label>
-            <div className={styles.shareOption}>
+            <div className={styles.shareOption} title="not implemented yet">
               <Label htmlColor="blue" className={styles.shareIcon} />
               <span className={styles.shareOptionText}>Tag</span>
             </div>
-            <div className={styles.shareOption}>
+            <div className={styles.shareOption} title="not implemented yet">
               <Room htmlColor="green" className={styles.shareIcon} />
               <span className={styles.shareOptionText}>Location</span>
             </div>
-            <div className={styles.shareOption}>
+            <div className={styles.shareOption} title="not implemented yet">
               <EmojiEmotions
                 htmlColor="goldenrod"
                 className={styles.shareIcon}

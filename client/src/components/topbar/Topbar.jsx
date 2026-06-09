@@ -53,7 +53,7 @@ const Topbar = () => {
         </Link>
       </div>
       <div className={styles.topbarCenter}>
-        <div className={styles.searchBar}>
+        <div className={styles.searchBar} title="not implemented yet">
           <Search className={styles.searchIcon} />
           <input
             className={styles.searchInput}
@@ -63,15 +63,15 @@ const Topbar = () => {
       </div>
       <div className={styles.topbarRight}>
         <div className={styles.topbarIcons}>
-          <div className={styles.topbarIconItem}>
+          <div className={styles.topbarIconItem} title="not implemented yet">
             <Person />
             <span className={styles.topbarIconBadge}>1</span>
           </div>
-          <div className={styles.topbarIconItem}>
+          <div className={styles.topbarIconItem} title="not implemented yet">
             <Chat />
             <span className={styles.topbarIconBadge}>2</span>
           </div>
-          <div className={styles.topbarIconItem}>
+          <div className={styles.topbarIconItem} title="not implemented yet">
             <Notifications />
             <span className={styles.topbarIconBadge}>1</span>
           </div>
