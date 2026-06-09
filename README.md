@@ -80,7 +80,7 @@ O projeto foi desenvolvido com React (Vite) no frontend e Node.js + Express no b
 As seguintes funcionalidades ainda estão sendo implementadas:
 
 - 🔍 **Busca de amigos em geral**
-- 📱 **Responsividade completa**
+- 📱 **Responsividade completa usando o Bootstrap**
 - 💬 **Conversas simultâneas (chat em tempo real)**
 - 🔔 **Notificações de novos posts de amigos**
 - 🤝 **Sistema de amizade (convites)**
