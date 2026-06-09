@@ -7,7 +7,7 @@ O projeto foi desenvolvido com React (Vite) no frontend e Node.js + Express no b
 ## 📸 Prévia da Aplicação
 
 <p align="center">
- <img width="1285" height="791" alt="image" src="https://github.com/user-attachments/assets/dda20690-4069-460a-bbf7-92b68616f914" />
+ <img width="1285" height="791" alt="image" src="https://github.com/user-attachments/assets/6c44da5d-f62f-4359-b808-55fbb31cb766" />
 </p>
 
 ## 🚀 Tecnologias Utilizadas
@@ -84,6 +84,7 @@ As seguintes funcionalidades ainda estão sendo implementadas:
 - 💬 **Conversas simultâneas (chat em tempo real)**
 - 🔔 **Notificações de novos posts de amigos**
 - 🤝 **Sistema de amizade (convites)**
+- 🔐 **Troca de senhas**
 
 ## 🛠️ Pré-requisitos
 
