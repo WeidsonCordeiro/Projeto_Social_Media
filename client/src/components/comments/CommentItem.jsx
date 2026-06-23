@@ -17,7 +17,7 @@ import styles from "./CommentItem.module.css";
 const CommentItem = ({ comment, currentUser, post, onEdit, onDelete }) => {
   const [openDropdown, setOpenDropdown] = useState(false);
 
-  const canEdit = post.userId._id === currentUser._id;
+  const canEdit = comment.userId._id === currentUser._id;
   const canDelete =
     comment.userId._id === currentUser._id ||
     post.userId._id === currentUser._id;

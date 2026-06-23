@@ -56,6 +56,11 @@ const setPost = async (req, res) => {
 
     const savedPost = await newPost.save();
 
+    //Broadcast event for add post in real time.
+    req.io.emit("postAdded", {
+      post: savedPost,
+    });
+
     res.status(201).json({
       message: "Post successfully registered",
       post: savedPost,
@@ -114,6 +119,12 @@ const updatePost = async (req, res) => {
       )
     );
 
+    //Broadcast event for update post in real time.
+    req.io.emit("postUpdated", {
+      postId: id,
+      updatedPost,
+    });
+
     res.status(200).json(updatedPost);
   } catch (error) {
     console.error("Error updating Post:", error);
@@ -157,6 +168,11 @@ const deletePost = async (req, res) => {
       return res.status(500).json({ error: ["Error removing the Post!"] });
     }
 
+    //Broadcast event for delete post in real time.
+    req.io.emit("postDeleted", {
+      postId: id,
+    });
+
     res
       .status(200)
       .json({ message: "Post successfully removed!", deletedPost });
@@ -193,6 +209,9 @@ const likePost = async (req, res) => {
         new: true,
       })
     );
+
+    //Broadcast event for likes in real time.
+    req.io.emit("postLiked", { postId: id, updatedPost });
 
     const message = postExists.likes.includes(userId)
       ? "Post successfully unliked!"
@@ -239,6 +258,9 @@ const commentPost = async (req, res) => {
       )
     );
 
+    // Launch an event to update comments in real time.
+    req.io.emit("commentAdded", { postId: id, updatedPost });
+
     res
       .status(200)
       .json({ message: "Comment successfully added!", updatedPost });
@@ -263,6 +285,33 @@ const deleteCommentPost = async (req, res) => {
       return res.status(422).json({ error: ["Invalid Comment ID!"] });
     }
 
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({
+        error: ["Post not found!"],
+      });
+    }
+
+    const comment = post.comments.id(commentId);
+
+    if (!comment) {
+      return res.status(404).json({
+        error: ["Comment not found!"],
+      });
+    }
+
+    const isCommentOwner =
+      comment.userId.toString() === req.user._id.toString();
+
+    const isPostOwner = post.userId.toString() === req.user._id.toString();
+
+    if (!isCommentOwner && !isPostOwner) {
+      return res.status(403).json({
+        error: ["You do not have permission to remove this comment!"],
+      });
+    }
+
     const updatedPost = await populateUser(
       Post.findByIdAndUpdate(
         id,
@@ -270,7 +319,6 @@ const deleteCommentPost = async (req, res) => {
           $pull: {
             comments: {
               _id: commentId,
-              userId: req.user._id,
             },
           },
         },
@@ -281,6 +329,12 @@ const deleteCommentPost = async (req, res) => {
     if (!updatedPost) {
       return res.status(404).json({ error: ["Post not found!"] });
     }
+
+    //Broadcast event for delete in real time.
+    req.io.emit("commentDeleted", {
+      postId: id,
+      updatedPost,
+    });
 
     res.status(200).json({
       message: "Comment successfully removed!",
@@ -335,6 +389,12 @@ const updateCommentPost = async (req, res) => {
     if (!updatedPost) {
       return res.status(404).json({ error: ["Post or comment not found!"] });
     }
+
+    //Broadcast event for update in real time.
+    req.io.emit("commentUpdated", {
+      postId: id,
+      updatedPost,
+    });
 
     res.status(200).json({
       message: "Comment successfully updated!",

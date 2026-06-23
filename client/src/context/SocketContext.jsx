@@ -20,8 +20,6 @@ export const SocketProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
-    // se não tiver usuário logado
-    // garante limpeza total
     if (!user?._id) {
       setOnlineUsers([]);
 
@@ -38,17 +36,15 @@ export const SocketProvider = ({ children }) => {
 
     setSocket(socketInstance);
 
-    // usuário entrou
-    socketInstance.emit("addUser", user._id);
-
-    // recebe usuários online
-    socketInstance.on("getUsers", (users) => {
-      setOnlineUsers(users);
-    });
-
     // conexão aberta
     socketInstance.on("connect", () => {
       console.log("✅ Socket connected:", socketInstance.id);
+
+      socketInstance.emit("addUser", user._id);
+    });
+
+    socketInstance.on("getUsers", (users) => {
+      setOnlineUsers(users);
     });
 
     // conexão encerrada
@@ -58,6 +54,7 @@ export const SocketProvider = ({ children }) => {
 
     // cleanup
     return () => {
+      socketInstance.off("getUsers");
       socketInstance.disconnect();
     };
   }, [user]);

@@ -1,10 +1,13 @@
 //Components
-import { AuthContext } from "../../context/AuthContext";
 import Post from "../post/Post";
 import Share from "../share/Share";
 
 //Hooks
 import { useState, useEffect, useContext } from "react";
+
+//Context
+import { AuthContext } from "../../context/AuthContext";
+import { SocketContext } from "../../context/SocketContext";
 
 //Material UI
 import { CircularProgress } from "@mui/material";
@@ -20,6 +23,35 @@ const Feed = ({ username, refreshFeed }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handlePostAdded = ({ post }) => {
+      setPosts((prev) => [post, ...prev]);
+    };
+
+    const handlePostUpdated = ({ postId, updatedPost }) => {
+      setPosts((prev) =>
+        prev.map((post) => (post._id === postId ? updatedPost : post))
+      );
+    };
+
+    const handlePostDeleted = ({ postId }) => {
+      setPosts((prev) => prev.filter((post) => post._id !== postId));
+    };
+
+    socket.on("postAdded", handlePostAdded);
+    socket.on("postUpdated", handlePostUpdated);
+    socket.on("postDeleted", handlePostDeleted);
+
+    return () => {
+      socket.off("postAdded", handlePostAdded);
+      socket.off("postUpdated", handlePostUpdated);
+      socket.off("postDeleted", handlePostDeleted);
+    };
+  }, [socket]);
 
   const loadPosts = async () => {
     setLoading(true);

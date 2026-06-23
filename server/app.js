@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 //Socket.io
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL_PRD,
+    origin: [process.env.CLIENT_URL_DEV, process.env.CLIENT_URL_PRD],
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -63,6 +63,12 @@ io.on("connection", (socket) => {
 
     io.emit("getUsers", onlineUsers);
   });
+});
+
+// Middleware para adicionar o Socket.IO ao req
+app.use((req, res, next) => {
+  req.io = io;
+  next();
 });
 
 //Routes

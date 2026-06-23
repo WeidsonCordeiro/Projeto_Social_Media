@@ -2,6 +2,7 @@
 import { useState, useContext, useEffect } from "react";
 
 //Context
+import { SocketContext } from "../../context/SocketContext";
 import { AuthContext } from "../../context/AuthContext";
 
 //Components
@@ -31,6 +32,50 @@ const Post = ({ post, refreshPosts }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCommentAdded = ({ postId, updatedPost }) => {
+      if (postId === post._id) {
+        setComments(updatedPost.comments);
+      }
+    };
+
+    socket.on("commentAdded", handleCommentAdded);
+
+    const handlePostLiked = ({ postId, updatedPost }) => {
+      if (postId === post._id) {
+        setLikes(updatedPost.likes || []);
+      }
+    };
+
+    socket.on("postLiked", handlePostLiked);
+
+    const handleCommentDeleted = ({ postId, updatedPost }) => {
+      if (postId === post._id) {
+        setComments(updatedPost.comments);
+      }
+    };
+
+    socket.on("commentDeleted", handleCommentDeleted);
+
+    const handleCommentUpdated = ({ postId, updatedPost }) => {
+      if (postId === post._id) {
+        setComments(updatedPost.comments);
+      }
+    };
+
+    socket.on("commentUpdated", handleCommentUpdated);
+
+    return () => {
+      socket.off("commentAdded", handleCommentAdded);
+      socket.off("postLiked", handlePostLiked);
+      socket.off("commentDeleted", handleCommentDeleted);
+      socket.off("commentUpdated", handleCommentUpdated);
+    };
+  }, [socket, post._id]);
 
   useEffect(() => {
     setLikes(post.likes || []);
